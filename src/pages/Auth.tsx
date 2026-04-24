@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { z } from "zod";
-import logo from "@/assets/logo-company.png";
+import logo from "@/assets/logo-company.jpeg";
 
 const signupSchema = z.object({
   full_name: z.string().trim().min(2, "Informe seu nome").max(100),
@@ -83,9 +83,8 @@ const Auth = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-hero p-4">
       <Card className="w-full max-w-md p-8 shadow-elegant">
-        <Link to="/" className="mb-6 flex items-center justify-center gap-2">
-          <img src={logo} alt="Company Contábil" width={40} height={40} className="h-10 w-10" />
-          <span className="font-display text-xl font-bold text-primary">Company <span className="text-accent">Contábil</span></span>
+        <Link to="/" className="mb-6 flex items-center justify-center" aria-label="Company Contábil">
+          <img src={logo} alt="Company Contábil — Consultoria e Gestão de Negócios" className="h-32 w-auto object-contain" />
         </Link>
 
         <h1 className="text-center font-display text-2xl font-bold text-primary">

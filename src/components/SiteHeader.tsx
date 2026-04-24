@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session } from "@supabase/supabase-js";
-import logo from "@/assets/logo-company.png";
+import logo from "@/assets/logo-company.jpeg";
 import { Menu, X } from "lucide-react";
 
 export const SiteHeader = () => {
@@ -26,13 +26,9 @@ export const SiteHeader = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/85 backdrop-blur-md">
-      <div className="container flex h-16 items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <img src={logo} alt="Company Contábil" width={36} height={36} className="h-9 w-9" />
-          <div className="leading-tight">
-            <span className="block font-display font-bold text-primary">Company</span>
-            <span className="block text-[10px] font-semibold uppercase tracking-widest text-accent -mt-0.5">Contábil</span>
-          </div>
+      <div className="container flex h-20 md:h-24 items-center justify-between">
+        <Link to="/" className="flex items-center" aria-label="Company Contábil">
+          <img src={logo} alt="Company Contábil — Consultoria e Gestão de Negócios" className="h-16 w-auto md:h-20 object-contain" />
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
