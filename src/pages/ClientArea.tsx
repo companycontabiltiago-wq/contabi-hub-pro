@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { LogOut, ExternalLink, FileText, Receipt, Users, Calendar, Settings, ShieldCheck } from "lucide-react";
-import logo from "@/assets/logo-company.png";
+import logo from "@/assets/logo-company.jpeg";
 
 type Resource = { id: string; title: string; description: string | null; url: string; icon: string | null };
 type Profile = { full_name: string | null; company_name: string | null };
@@ -55,10 +55,10 @@ const ClientArea = () => {
   return (
     <div className="min-h-screen bg-gradient-soft">
       <header className="border-b border-border bg-background">
-        <div className="container flex h-16 items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <img src={logo} alt="Logo" width={32} height={32} className="h-8 w-8" />
-            <span className="font-display font-bold text-primary">Área do Cliente</span>
+        <div className="container flex h-20 md:h-24 items-center justify-between">
+          <Link to="/" className="flex items-center gap-3" aria-label="Company Contábil">
+            <img src={logo} alt="Company Contábil" className="h-16 w-auto md:h-20 object-contain" />
+            <span className="hidden sm:inline font-display font-bold text-primary text-lg">Área do Cliente</span>
           </Link>
           <div className="flex items-center gap-2">
             {isAdmin && (
