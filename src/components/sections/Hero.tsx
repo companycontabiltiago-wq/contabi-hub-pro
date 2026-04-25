@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ShieldCheck, Repeat, Phone } from "lucide-react";
+import { ShieldCheck, Repeat, Phone } from "lucide-react";
 import heroImage from "@/assets/escritorio-moderno.jpg";
-import { useNavigate } from "react-router-dom";
+import { openWhatsApp, buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export const Hero = () => {
-  const navigate = useNavigate();
+  const waUrl = buildWhatsAppUrl();
   return (
     <section className="relative overflow-hidden bg-gradient-hero text-primary-foreground">
       <div className="absolute inset-0 opacity-20">
@@ -27,13 +27,23 @@ export const Hero = () => {
           <div className="mt-8 flex flex-wrap gap-3">
             <Button size="lg" asChild
               className="bg-accent text-accent-foreground hover:bg-accent/90 shadow-glow">
-              <a href="https://wa.me/5585999154055?text=Como%20podemos%20ajudar%20voc%C3%AA%20hoje%3F" target="_blank" rel="noopener noreferrer">
+              <a
+                href={waUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => { e.preventDefault(); openWhatsApp(); }}
+              >
                 <Repeat className="mr-2 h-4 w-4" /> Trocar de contabilidade
               </a>
             </Button>
             <Button size="lg" variant="outline" asChild
               className="border-primary-foreground/30 bg-transparent text-primary-foreground hover:bg-primary-foreground/10">
-              <a href="https://wa.me/5585999154055?text=Como%20podemos%20ajudar%20voc%C3%AA%20hoje%3F" target="_blank" rel="noopener noreferrer">
+              <a
+                href={waUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => { e.preventDefault(); openWhatsApp(); }}
+              >
                 <Phone className="mr-2 h-4 w-4" /> Fale com um contador
               </a>
             </Button>

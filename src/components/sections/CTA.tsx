@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
-import { ArrowRight, Repeat, Phone } from "lucide-react";
+import { Repeat, Phone } from "lucide-react";
+import { openWhatsApp, buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export const CTA = () => {
-  const navigate = useNavigate();
+  const waUrl = buildWhatsAppUrl();
   return (
     <section className="py-16">
       <div className="container">
@@ -19,13 +19,23 @@ export const CTA = () => {
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Button size="lg" asChild
                 className="bg-accent text-accent-foreground hover:bg-accent/90 shadow-glow">
-                <a href="https://wa.me/5585999154055?text=Como%20podemos%20ajudar%20voc%C3%AA%20hoje%3F" target="_blank" rel="noopener noreferrer">
+                <a
+                  href={waUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => { e.preventDefault(); openWhatsApp(); }}
+                >
                   <Repeat className="mr-2 h-4 w-4" /> Trocar de contabilidade
                 </a>
               </Button>
               <Button size="lg" variant="outline" asChild
                 className="border-primary-foreground/30 bg-transparent text-primary-foreground hover:bg-primary-foreground/10">
-                <a href="https://wa.me/5585999154055?text=Como%20podemos%20ajudar%20voc%C3%AA%20hoje%3F" target="_blank" rel="noopener noreferrer">
+                <a
+                  href={waUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => { e.preventDefault(); openWhatsApp(); }}
+                >
                   <Phone className="mr-2 h-4 w-4" /> Fale com um contador
                 </a>
               </Button>
