@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ShieldCheck } from "lucide-react";
-import heroImage from "@/assets/hero-accountant.jpg";
+import { ArrowRight, ShieldCheck, Repeat, Phone } from "lucide-react";
+import heroImage from "@/assets/escritorio-moderno.jpg";
 import { useNavigate } from "react-router-dom";
 
 export const Hero = () => {
@@ -27,11 +27,13 @@ export const Hero = () => {
           <div className="mt-8 flex flex-wrap gap-3">
             <Button size="lg" onClick={() => navigate("/auth?mode=signup")}
               className="bg-accent text-accent-foreground hover:bg-accent/90 shadow-glow">
-              Comece agora <ArrowRight className="ml-2 h-4 w-4" />
+              <Repeat className="mr-2 h-4 w-4" /> Trocar de contabilidade
             </Button>
             <Button size="lg" variant="outline" asChild
               className="border-primary-foreground/30 bg-transparent text-primary-foreground hover:bg-primary-foreground/10">
-              <a href="#planos">Ver planos</a>
+              <a href="https://wa.me/5585999154055" target="_blank" rel="noopener noreferrer">
+                <Phone className="mr-2 h-4 w-4" /> Fale com um contador
+              </a>
             </Button>
           </div>
 
@@ -55,7 +57,7 @@ export const Hero = () => {
           <div className="absolute -inset-4 rounded-3xl bg-accent/20 blur-2xl" />
           <img
             src={heroImage}
-            alt="Contador da Company Contábil pronto para atender"
+            alt="Escritório moderno da Company Contábil em Fortaleza"
             width={1280}
             height={1280}
             className="relative w-full rounded-3xl shadow-elegant"
