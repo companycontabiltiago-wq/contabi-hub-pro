@@ -17,13 +17,15 @@ export const CTA = () => {
               Migre para a Company Contábil em poucos minutos. Cuidamos de toda a transição.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Button size="lg" onClick={() => navigate("/auth?mode=signup")}
+              <Button size="lg" asChild
                 className="bg-accent text-accent-foreground hover:bg-accent/90 shadow-glow">
-                <Repeat className="mr-2 h-4 w-4" /> Trocar de contabilidade
+                <a href="https://wa.me/5585999154055?text=Como%20podemos%20ajudar%20voc%C3%AA%20hoje%3F" target="_blank" rel="noopener noreferrer">
+                  <Repeat className="mr-2 h-4 w-4" /> Trocar de contabilidade
+                </a>
               </Button>
               <Button size="lg" variant="outline" asChild
                 className="border-primary-foreground/30 bg-transparent text-primary-foreground hover:bg-primary-foreground/10">
-                <a href="https://wa.me/5585999154055" target="_blank" rel="noopener noreferrer">
+                <a href="https://wa.me/5585999154055?text=Como%20podemos%20ajudar%20voc%C3%AA%20hoje%3F" target="_blank" rel="noopener noreferrer">
                   <Phone className="mr-2 h-4 w-4" /> Fale com um contador
                 </a>
               </Button>
