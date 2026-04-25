@@ -19,6 +19,25 @@ const labels = {
   previdenciaria: "Reforma Previdenciária",
 } as const;
 
+const NewsCard = ({ item }: { item: News }) => (
+  <Card className="group flex h-full flex-col p-6 transition-all hover:-translate-y-1 hover:shadow-elegant">
+    <Badge variant="secondary" className="w-fit bg-accent/10 text-accent hover:bg-accent/20">
+      {labels[item.category]}
+    </Badge>
+    <h3 className="mt-4 font-display text-lg font-semibold leading-snug text-primary">{item.title}</h3>
+    <p className="mt-2 flex-1 text-sm text-muted-foreground">{item.summary}</p>
+    <div className="mt-5 flex items-center justify-between border-t border-border pt-4 text-xs text-muted-foreground">
+      <span className="flex items-center gap-1.5">
+        <Calendar className="h-3.5 w-3.5" />
+        {new Date(item.created_at).toLocaleDateString("pt-BR")}
+      </span>
+      <span className="flex items-center gap-1 font-medium text-accent">
+        Ler mais <ArrowRight className="h-3 w-3" />
+      </span>
+    </div>
+  </Card>
+);
+
 export const Reforms = () => {
   const [news, setNews] = useState<News[]>([]);
   const [loading, setLoading] = useState(true);
@@ -35,20 +54,6 @@ export const Reforms = () => {
   }, []);
 
   const filter = (cat: News["category"]) => news.filter(n => n.category === cat);
-
-  const NewsCard = ({ item }: { item: News }) => (
-    <Card className="group flex h-full flex-col p-6 transition-all hover:-translate-y-1 hover:shadow-elegant">
-      <Badge variant="secondary" className="w-fit bg-accent/10 text-accent hover:bg-accent/20">{labels[item.category]}</Badge>
-      <h3 className="mt-4 font-display text-lg font-semibold leading-snug text-primary">{item.title}</h3>
-      <p className="mt-2 flex-1 text-sm text-muted-foreground">{item.summary}</p>
-      <div className="mt-5 flex items-center justify-between border-t border-border pt-4 text-xs text-muted-foreground">
-        <span className="flex items-center gap-1.5"><Calendar className="h-3.5 w-3.5" />
-          {new Date(item.created_at).toLocaleDateString("pt-BR")}
-        </span>
-        <span className="flex items-center gap-1 font-medium text-accent">Ler mais <ArrowRight className="h-3 w-3" /></span>
-      </div>
-    </Card>
-  );
 
   return (
     <section id="reformas" className="py-20 md:py-28">
