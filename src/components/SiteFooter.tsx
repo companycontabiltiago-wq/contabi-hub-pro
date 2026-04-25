@@ -1,7 +1,9 @@
 import { Mail, Phone, MapPin } from "lucide-react";
+import { openWhatsApp, buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export const SiteFooter = () => {
   const mapsQuery = encodeURIComponent("Rua Sete de Setembro, 160 - Parangaba, Fortaleza - CE, 60720-080");
+  const waUrl = buildWhatsAppUrl();
   return (
     <footer id="contato" className="bg-primary text-primary-foreground">
       <div className="container grid gap-10 py-16 md:grid-cols-3">
@@ -19,7 +21,13 @@ export const SiteFooter = () => {
           <ul className="space-y-3 text-sm text-primary-foreground/85">
             <li className="flex items-center gap-2">
               <Phone className="h-4 w-4 shrink-0 text-accent" />
-              <a href="https://wa.me/5585999154055" target="_blank" rel="noopener noreferrer" className="hover:text-accent">
+              <a
+                href={waUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => { e.preventDefault(); openWhatsApp(); }}
+                className="hover:text-accent"
+              >
                 (85) 99915-4055
               </a>
             </li>
