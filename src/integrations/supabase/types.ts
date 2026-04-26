@@ -74,6 +74,63 @@ export type Database = {
         }
         Relationships: []
       }
+      plan_leads: {
+        Row: {
+          cnpj: string | null
+          company_name: string | null
+          contact_name: string
+          created_at: string
+          current_accountant: boolean | null
+          email: string
+          employees_clt: number
+          has_cnpj: boolean
+          id: string
+          monthly_revenue: number | null
+          notes: string | null
+          phone: string
+          plan_name: string
+          preferred_contact: string | null
+          segment: Database["public"]["Enums"]["business_segment"]
+          tax_regime: Database["public"]["Enums"]["tax_regime"]
+        }
+        Insert: {
+          cnpj?: string | null
+          company_name?: string | null
+          contact_name: string
+          created_at?: string
+          current_accountant?: boolean | null
+          email: string
+          employees_clt?: number
+          has_cnpj?: boolean
+          id?: string
+          monthly_revenue?: number | null
+          notes?: string | null
+          phone: string
+          plan_name: string
+          preferred_contact?: string | null
+          segment: Database["public"]["Enums"]["business_segment"]
+          tax_regime: Database["public"]["Enums"]["tax_regime"]
+        }
+        Update: {
+          cnpj?: string | null
+          company_name?: string | null
+          contact_name?: string
+          created_at?: string
+          current_accountant?: boolean | null
+          email?: string
+          employees_clt?: number
+          has_cnpj?: boolean
+          id?: string
+          monthly_revenue?: number | null
+          notes?: string | null
+          phone?: string
+          plan_name?: string
+          preferred_contact?: string | null
+          segment?: Database["public"]["Enums"]["business_segment"]
+          tax_regime?: Database["public"]["Enums"]["tax_regime"]
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           company_name: string | null
@@ -131,7 +188,14 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "client"
+      business_segment: "comercio" | "servico" | "industria" | "outros"
       news_category: "tributaria" | "trabalhista" | "previdenciaria"
+      tax_regime:
+        | "mei"
+        | "simples_nacional"
+        | "lucro_presumido"
+        | "lucro_real"
+        | "nao_sei"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -260,7 +324,15 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "client"],
+      business_segment: ["comercio", "servico", "industria", "outros"],
       news_category: ["tributaria", "trabalhista", "previdenciaria"],
+      tax_regime: [
+        "mei",
+        "simples_nacional",
+        "lucro_presumido",
+        "lucro_real",
+        "nao_sei",
+      ],
     },
   },
 } as const
