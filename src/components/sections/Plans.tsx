@@ -49,7 +49,7 @@ const plans = [
 ];
 
 export const Plans = () => {
-  const navigate = useNavigate();
+  const [selected, setSelected] = useState<{ name: string; price: string } | null>(null);
   return (
     <section id="planos" className="bg-gradient-soft py-20 md:py-28">
       <div className="container">
@@ -95,7 +95,7 @@ export const Plans = () => {
               </ul>
 
               <Button
-                onClick={() => navigate("/auth?mode=signup")}
+                onClick={() => setSelected({ name: plan.name, price: plan.price })}
                 className={`mt-8 w-full ${plan.highlight ? "bg-accent text-accent-foreground hover:bg-accent/90" : ""}`}
                 variant={plan.highlight ? "default" : "outline"}
               >
@@ -105,6 +105,13 @@ export const Plans = () => {
           ))}
         </div>
       </div>
+
+      <PlanContractDialog
+        open={!!selected}
+        onOpenChange={(o) => !o && setSelected(null)}
+        planName={selected?.name ?? ""}
+        planPrice={selected?.price}
+      />
     </section>
   );
 };
