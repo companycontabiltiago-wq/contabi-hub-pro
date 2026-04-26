@@ -328,7 +328,7 @@ export const PlanContractDialog = ({ open, onOpenChange, planName, planPrice }: 
               <div className="space-y-1.5">
                 <Label htmlFor="tax_regime">Regime tributário atual *</Label>
                 <Select
-                  value={form.tax_regime}
+                  value={form.tax_regime || undefined}
                   onValueChange={v => update("tax_regime", v as TaxRegime)}
                 >
                   <SelectTrigger id="tax_regime">
