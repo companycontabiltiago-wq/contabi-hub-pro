@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
-import { openWhatsApp } from "@/lib/whatsapp";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -132,6 +132,10 @@ export const PlanContractDialog = ({ open, onOpenChange, planName, planPrice }: 
       return;
     }
 
+    // Abre a janela IMEDIATAMENTE no clique do usuário (necessário para evitar bloqueio de popup).
+    // A URL final é definida depois que o backend confirmar o envio.
+    const popup = window.open("about:blank", "_blank");
+
     setSubmitting(true);
     const revenue = parseRevenue(form.monthly_revenue);
     const employees = parseInt(form.employees_clt, 10) || 0;
@@ -156,6 +160,7 @@ export const PlanContractDialog = ({ open, onOpenChange, planName, planPrice }: 
     setSubmitting(false);
 
     if (error) {
+      popup?.close();
       toast({
         title: "Não foi possível enviar",
         description: "Tente novamente em instantes.",
@@ -184,11 +189,18 @@ export const PlanContractDialog = ({ open, onOpenChange, planName, planPrice }: 
       .filter(Boolean)
       .join("\n");
 
-    openWhatsApp(message);
+    const waUrl = buildWhatsAppUrl(message);
+
+    if (popup && !popup.closed) {
+      popup.location.href = waUrl;
+    } else {
+      // Fallback caso o navegador tenha bloqueado o popup: navega na mesma aba.
+      window.location.assign(waUrl);
+    }
 
     toast({
       title: "Pedido enviado!",
-      description: "Recebemos seus dados e você será redirecionado ao WhatsApp.",
+      description: "Abrindo o WhatsApp da Company Contábil...",
     });
 
     setForm(initialState);
