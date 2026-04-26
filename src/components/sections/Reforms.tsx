@@ -113,10 +113,11 @@ const NewsCard = ({ item, onOpen }: { item: News; onOpen: (n: News) => void }) =
 export const Reforms = () => {
   const [news, setNews] = useState<News[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState<News | null>(null);
 
   useEffect(() => {
     supabase.from("news")
-      .select("id,title,summary,category,created_at")
+      .select("id,title,summary,content,category,created_at")
       .eq("published", true)
       .order("created_at", { ascending: false })
       .then(({ data }) => {
@@ -155,13 +156,40 @@ export const Reforms = () => {
                 <p className="text-center text-muted-foreground">Em breve novidades.</p>
               ) : (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  {filter(cat).map(item => <NewsCard key={item.id} item={item} />)}
+                  {filter(cat).map(item => (
+                    <NewsCard key={item.id} item={item} onOpen={setSelected} />
+                  ))}
                 </div>
               )}
             </TabsContent>
           ))}
         </Tabs>
       </div>
+
+      <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
+        <DialogContent className="max-w-2xl">
+          {selected && (
+            <>
+              <DialogHeader>
+                <Badge variant="secondary" className="w-fit bg-accent/10 text-accent hover:bg-accent/20">
+                  {labels[selected.category]}
+                </Badge>
+                <DialogTitle className="font-display text-2xl text-primary">
+                  {selected.title}
+                </DialogTitle>
+                <DialogDescription className="flex items-center gap-1.5 text-xs">
+                  <Calendar className="h-3.5 w-3.5" />
+                  {new Date(selected.created_at).toLocaleDateString("pt-BR")}
+                </DialogDescription>
+              </DialogHeader>
+              <ScrollArea className="max-h-[60vh] pr-4">
+                <p className="text-sm font-medium text-foreground/90">{selected.summary}</p>
+                <div className="mt-2">{renderMarkdown(selected.content || "")}</div>
+              </ScrollArea>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };
