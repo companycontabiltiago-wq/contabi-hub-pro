@@ -18,8 +18,11 @@ export const Hero = () => {
             <ShieldCheck className="h-3.5 w-3.5" /> Contabilidade Consultiva
           </span>
           <h1 className="mt-6 font-display text-4xl font-bold leading-[1.1] text-balance md:text-6xl">
-            Sua empresa pronta para a <span className="text-accent">Reforma Tributária</span>.
+            Reduzimos seus impostos de <span className="text-accent">forma Legal</span>.
           </h1>
+          <p className="mt-4 font-display text-xl font-semibold text-primary-foreground/90 md:text-2xl">
+            Contabilidade que usa a legislação ao seu favor.
+          </p>
           <p className="mt-6 max-w-lg text-lg text-primary-foreground/85">
             Contabilidade estratégica, suporte humano e tecnologia para você crescer com segurança fiscal,
             trabalhista e previdenciária.
