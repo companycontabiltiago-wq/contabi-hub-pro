@@ -307,7 +307,7 @@ export const PlanContractDialog = ({ open, onOpenChange, planName, planPrice }: 
               <div className="space-y-2">
                 <Label>Segmento da empresa *</Label>
                 <RadioGroup
-                  value={form.segment}
+                  value={form.segment || undefined}
                   onValueChange={v => update("segment", v as Segment)}
                   className="grid grid-cols-2 gap-2 sm:grid-cols-4"
                 >
