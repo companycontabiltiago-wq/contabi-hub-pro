@@ -1,7 +1,8 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Check, Sparkles } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { PlanContractDialog } from "@/components/PlanContractDialog";
 
 const plans = [
   {
