@@ -9,7 +9,7 @@ const plans = [
     price: "299",
     desc: "Ideal para MEI e pequenas empresas no Simples Nacional.",
     features: [
-      "Escrituração fiscal e contábil",
+      "Escrituração fiscal",
       "Apuração mensal de impostos",
       "Folha para até 3 funcionários",
       "Atendimento por WhatsApp",
