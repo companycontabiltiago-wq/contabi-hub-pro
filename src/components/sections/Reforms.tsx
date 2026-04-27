@@ -13,6 +13,7 @@ type News = {
   summary: string;
   content: string;
   category: "tributaria" | "trabalhista" | "previdenciaria";
+  image_url: string | null;
   created_at: string;
 };
 
@@ -117,7 +118,7 @@ export const Reforms = () => {
 
   useEffect(() => {
     supabase.from("news")
-      .select("id,title,summary,content,category,created_at")
+      .select("id,title,summary,content,category,image_url,created_at")
       .eq("published", true)
       .order("created_at", { ascending: false })
       .then(({ data }) => {
@@ -167,25 +168,38 @@ export const Reforms = () => {
       </div>
 
       <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl p-0 overflow-hidden">
           {selected && (
             <>
-              <DialogHeader>
-                <Badge variant="secondary" className="w-fit bg-accent/10 text-accent hover:bg-accent/20">
-                  {labels[selected.category]}
-                </Badge>
-                <DialogTitle className="font-display text-2xl text-primary">
-                  {selected.title}
-                </DialogTitle>
-                <DialogDescription className="flex items-center gap-1.5 text-xs">
-                  <Calendar className="h-3.5 w-3.5" />
-                  {new Date(selected.created_at).toLocaleDateString("pt-BR")}
-                </DialogDescription>
-              </DialogHeader>
-              <ScrollArea className="max-h-[60vh] pr-4">
-                <p className="text-sm font-medium text-foreground/90">{selected.summary}</p>
-                <div className="mt-2">{renderMarkdown(selected.content || "")}</div>
-              </ScrollArea>
+              {selected.image_url && (
+                <div className="relative -mt-px aspect-[16/8] w-full overflow-hidden bg-primary">
+                  <img
+                    src={selected.image_url}
+                    alt={selected.title}
+                    loading="lazy"
+                    className="h-full w-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent" />
+                </div>
+              )}
+              <div className="px-6 pb-6 pt-5">
+                <DialogHeader>
+                  <Badge variant="secondary" className="w-fit bg-accent/10 text-accent hover:bg-accent/20">
+                    {labels[selected.category]}
+                  </Badge>
+                  <DialogTitle className="font-display text-2xl text-primary">
+                    {selected.title}
+                  </DialogTitle>
+                  <DialogDescription className="flex items-center gap-1.5 text-xs">
+                    <Calendar className="h-3.5 w-3.5" />
+                    {new Date(selected.created_at).toLocaleDateString("pt-BR")}
+                  </DialogDescription>
+                </DialogHeader>
+                <ScrollArea className="mt-4 max-h-[55vh] pr-4">
+                  <p className="text-sm font-medium text-foreground/90">{selected.summary}</p>
+                  <div className="mt-2">{renderMarkdown(selected.content || "")}</div>
+                </ScrollArea>
+              </div>
             </>
           )}
         </DialogContent>
