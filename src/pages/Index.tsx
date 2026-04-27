@@ -4,6 +4,7 @@ import { Hero } from "@/components/sections/Hero";
 import { Services } from "@/components/sections/Services";
 import { Process } from "@/components/sections/Process";
 import { Reforms } from "@/components/sections/Reforms";
+import { Healthcare } from "@/components/sections/Healthcare";
 import { Plans } from "@/components/sections/Plans";
 import { FAQ } from "@/components/sections/FAQ";
 import { CTA } from "@/components/sections/CTA";
@@ -17,6 +18,7 @@ const Index = () => {
         <Services />
         <Process />
         <Reforms />
+        <Healthcare />
         <Plans />
         <FAQ />
         <CTA />
