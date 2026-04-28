@@ -444,26 +444,93 @@ const TETO_INSS_RPA = 8157.41; // teto previdenciário vigente
 const RPA_FAIXA1 = 5000.0;
 const RPA_FAIXA2 = 7350.0;
 
+// Helpers de formatação
+const formatCpfCnpj = (raw: string) => {
+  const d = raw.replace(/\D/g, "").slice(0, 14);
+  if (d.length <= 11) {
+    return d
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+  }
+  return d
+    .replace(/^(\d{2})(\d)/, "$1.$2")
+    .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
+    .replace(/\.(\d{3})(\d)/, ".$1/$2")
+    .replace(/(\d{4})(\d)/, "$1-$2");
+};
+
+// Conversor numérico → extenso em reais (simplificado)
+const valorPorExtenso = (valor: number): string => {
+  if (valor <= 0) return "zero reais";
+  const unidades = ["", "um", "dois", "três", "quatro", "cinco", "seis", "sete", "oito", "nove"];
+  const especiais = ["dez", "onze", "doze", "treze", "quatorze", "quinze", "dezesseis", "dezessete", "dezoito", "dezenove"];
+  const dezenas = ["", "", "vinte", "trinta", "quarenta", "cinquenta", "sessenta", "setenta", "oitenta", "noventa"];
+  const centenas = ["", "cento", "duzentos", "trezentos", "quatrocentos", "quinhentos", "seiscentos", "setecentos", "oitocentos", "novecentos"];
+
+  const ate999 = (n: number): string => {
+    if (n === 0) return "";
+    if (n === 100) return "cem";
+    const c = Math.floor(n / 100);
+    const r = n % 100;
+    const partes: string[] = [];
+    if (c) partes.push(centenas[c]);
+    if (r < 10) {
+      if (r) partes.push(unidades[r]);
+    } else if (r < 20) {
+      partes.push(especiais[r - 10]);
+    } else {
+      const d = Math.floor(r / 10);
+      const u = r % 10;
+      partes.push(dezenas[d] + (u ? " e " + unidades[u] : ""));
+    }
+    return partes.join(" e ");
+  };
+
+  const inteiro = Math.floor(valor);
+  const cent = Math.round((valor - inteiro) * 100);
+  const milhares = Math.floor(inteiro / 1000);
+  const resto = inteiro % 1000;
+
+  let texto = "";
+  if (milhares > 0) {
+    texto += (milhares === 1 ? "mil" : ate999(milhares) + " mil");
+    if (resto > 0) texto += resto < 100 ? " e " : " ";
+  }
+  if (resto > 0) texto += ate999(resto);
+  texto += inteiro === 1 ? " real" : " reais";
+  if (cent > 0) {
+    texto += " e " + ate999(cent) + (cent === 1 ? " centavo" : " centavos");
+  }
+  return texto;
+};
+
 const RpaCalc = () => {
   const [bruto, setBruto] = useState<string>("");
   const [iss, setIss] = useState<string>("5");
   const [inssRetidoOutros, setInssRetidoOutros] = useState<string>("");
+
+  // Dados do recibo
+  const [prestador, setPrestador] = useState("");
+  const [cpfPrestador, setCpfPrestador] = useState("");
+  const [tomador, setTomador] = useState("");
+  const [cnpjTomador, setCnpjTomador] = useState("");
+  const [descricao, setDescricao] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [data, setData] = useState<string>(() => new Date().toISOString().slice(0, 10));
 
   const v = parseFloat(bruto.replace(",", ".")) || 0;
   const aliqIss = parseFloat(iss.replace(",", ".")) || 0;
   const inssOutros = parseFloat(inssRetidoOutros.replace(",", ".")) || 0;
 
   const result = useMemo(() => {
-    // INSS 11% respeitando teto mensal (descontando o já retido por outros contratantes)
     const tetoInss = TETO_INSS_RPA * 0.11;
     const inssBruto = v * 0.11;
     const inssDevido = Math.max(0, Math.min(inssBruto, tetoInss - inssOutros));
 
-    // Base IRRF = bruto - INSS
     const baseIR = Math.max(0, v - inssDevido);
     const irrfPadrao = calcIRRF(baseIR);
 
-    // Regra Lei 14.663/2023
     let irrfFinal = irrfPadrao;
     let regraIR = "Tabela progressiva padrão";
     if (v <= RPA_FAIXA1) {
@@ -475,24 +542,120 @@ const RpaCalc = () => {
       regraIR = "Desconto especial (Lei 14.663/2023)";
     }
 
-    // ISS municipal
     const issValor = v * (aliqIss / 100);
-
     const liquido = v - inssDevido - irrfFinal - issValor;
-
-    // Patronal (informativo)
     const inssPatronal = v * 0.2;
 
-    return {
-      inssDevido,
-      irrfFinal,
-      regraIR,
-      issValor,
-      liquido,
-      inssPatronal,
-      baseIR,
-    };
+    return { inssDevido, irrfFinal, regraIR, issValor, liquido, inssPatronal, baseIR };
   }, [v, aliqIss, inssOutros]);
+
+  const gerarRecibo = () => {
+    const doc = new jsPDF({ unit: "mm", format: "a4" });
+    const pageW = 210;
+    const margin = 18;
+    let y = margin;
+
+    doc.setFillColor(15, 32, 72);
+    doc.rect(0, 0, pageW, 22, "F");
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.text("RECIBO DE PAGAMENTO A AUTÔNOMO (RPA)", pageW / 2, 14, { align: "center" });
+
+    y = 32;
+    doc.setTextColor(20, 20, 20);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.text(`Nº do recibo: ${Date.now().toString().slice(-8)}`, margin, y);
+    doc.text(`Data: ${new Date(data).toLocaleDateString("pt-BR")}`, pageW - margin, y, { align: "right" });
+
+    y += 10;
+    doc.setDrawColor(15, 32, 72);
+    doc.setLineWidth(0.4);
+    doc.rect(margin, y, pageW - margin * 2, 14);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.text(`VALOR BRUTO: ${fmtBRL(v)}`, pageW / 2, y + 9, { align: "center" });
+
+    y += 22;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+    const ano = new Date(data).getFullYear();
+    const declaracao =
+      `Recebi de ${tomador || "________________________"}, inscrito(a) no CNPJ nº ${cnpjTomador || "____________________"}, ` +
+      `a importância de ${fmtBRL(v)} (${valorPorExtenso(v)}), referente a ${descricao || "prestação de serviços autônomos"}, ` +
+      `prestado(s) no exercício de ${ano}, conforme demonstrativo abaixo.`;
+    const linhas = doc.splitTextToSize(declaracao, pageW - margin * 2);
+    doc.text(linhas, margin, y);
+    y += linhas.length * 5 + 4;
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.text("Demonstrativo de cálculo", margin, y);
+    y += 2;
+    doc.setLineWidth(0.2);
+    doc.line(margin, y, pageW - margin, y);
+    y += 6;
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+    const linha = (label: string, val: string, bold = false) => {
+      doc.setFont("helvetica", bold ? "bold" : "normal");
+      doc.text(label, margin, y);
+      doc.text(val, pageW - margin, y, { align: "right" });
+      y += 6;
+    };
+    linha("Valor bruto do serviço", fmtBRL(v));
+    linha("(-) INSS (11%, com teto)", fmtBRL(result.inssDevido));
+    linha(`(-) IRRF — ${result.regraIR}`, fmtBRL(result.irrfFinal));
+    linha(`(-) ISS (${aliqIss}%)`, fmtBRL(result.issValor));
+    y += 1;
+    doc.setLineWidth(0.3);
+    doc.line(margin, y, pageW - margin, y);
+    y += 6;
+    linha("VALOR LÍQUIDO A RECEBER", fmtBRL(result.liquido), true);
+
+    y += 6;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.text("Identificação das partes", margin, y);
+    y += 2;
+    doc.setLineWidth(0.2);
+    doc.line(margin, y, pageW - margin, y);
+    y += 6;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+    linha("Prestador (autônomo)", prestador || "—", true);
+    linha("CPF/CNPJ do prestador", cpfPrestador || "—");
+    y += 2;
+    linha("Tomador (contratante)", tomador || "—", true);
+    linha("CNPJ do tomador", cnpjTomador || "—");
+
+    y += 10;
+    doc.setFont("helvetica", "normal");
+    doc.text(
+      `${cidade || "________________"}, ${new Date(data).toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}.`,
+      margin,
+      y,
+    );
+    y += 24;
+    doc.line(margin + 30, y, pageW - margin - 30, y);
+    y += 5;
+    doc.text(prestador || "Assinatura do prestador", pageW / 2, y, { align: "center" });
+
+    doc.setFontSize(8);
+    doc.setTextColor(120, 120, 120);
+    doc.text(
+      "Documento gerado por Company Contábil — calculadora gratuita. Conferência sujeita à legislação vigente.",
+      pageW / 2,
+      287,
+      { align: "center" },
+    );
+
+    doc.save(`RPA_${(prestador || "prestador").replace(/\s+/g, "_")}_${data}.pdf`);
+  };
+
+  const podeGerar = v > 0 && !!prestador && !!tomador && !!cnpjTomador && !!cidade;
 
   return (
     <div className="space-y-4">
@@ -542,10 +705,7 @@ const RpaCalc = () => {
         <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-2 text-sm">
           <Row label="Valor bruto do serviço" value={fmtBRL(v)} />
           <Row label="INSS (11%, com teto)" value={`- ${fmtBRL(result.inssDevido)}`} />
-          <Row
-            label={`IRRF — ${result.regraIR}`}
-            value={`- ${fmtBRL(result.irrfFinal)}`}
-          />
+          <Row label={`IRRF — ${result.regraIR}`} value={`- ${fmtBRL(result.irrfFinal)}`} />
           <Row label={`ISS (${aliqIss}%)`} value={`- ${fmtBRL(result.issValor)}`} />
           <div className="my-2 h-px bg-border" />
           <Row label="Líquido a receber" value={fmtBRL(result.liquido)} highlight />
@@ -556,6 +716,103 @@ const RpaCalc = () => {
           </p>
         </div>
       )}
+
+      <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 space-y-3">
+        <h4 className="font-display font-bold text-primary">
+          Dados para emissão do recibo
+        </h4>
+        <p className="text-xs text-muted-foreground">
+          Preencha os dados abaixo para gerar automaticamente o recibo em PDF
+          com o cálculo já aplicado.
+        </p>
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div>
+            <Label htmlFor="rpa-prestador">Nome do prestador (autônomo)</Label>
+            <Input
+              id="rpa-prestador"
+              placeholder="Ex: João da Silva"
+              value={prestador}
+              onChange={(e) => setPrestador(e.target.value)}
+              maxLength={120}
+            />
+          </div>
+          <div>
+            <Label htmlFor="rpa-cpf">CPF/CNPJ do prestador</Label>
+            <Input
+              id="rpa-cpf"
+              placeholder="000.000.000-00"
+              value={cpfPrestador}
+              onChange={(e) => setCpfPrestador(formatCpfCnpj(e.target.value))}
+              maxLength={18}
+            />
+          </div>
+          <div>
+            <Label htmlFor="rpa-tomador">Nome do tomador (contratante)</Label>
+            <Input
+              id="rpa-tomador"
+              placeholder="Ex: Empresa XYZ Ltda."
+              value={tomador}
+              onChange={(e) => setTomador(e.target.value)}
+              maxLength={150}
+            />
+          </div>
+          <div>
+            <Label htmlFor="rpa-cnpj">CNPJ do tomador</Label>
+            <Input
+              id="rpa-cnpj"
+              placeholder="00.000.000/0000-00"
+              value={cnpjTomador}
+              onChange={(e) => setCnpjTomador(formatCpfCnpj(e.target.value))}
+              maxLength={18}
+            />
+          </div>
+          <div>
+            <Label htmlFor="rpa-cidade">Cidade</Label>
+            <Input
+              id="rpa-cidade"
+              placeholder="Ex: São Paulo"
+              value={cidade}
+              onChange={(e) => setCidade(e.target.value)}
+              maxLength={80}
+            />
+          </div>
+          <div>
+            <Label htmlFor="rpa-data">Data</Label>
+            <Input
+              id="rpa-data"
+              type="date"
+              value={data}
+              onChange={(e) => setData(e.target.value)}
+            />
+          </div>
+          <div className="sm:col-span-2">
+            <Label htmlFor="rpa-desc">Descrição do serviço prestado</Label>
+            <Input
+              id="rpa-desc"
+              placeholder="Ex: Consultoria técnica em outubro/2026"
+              value={descricao}
+              onChange={(e) => setDescricao(e.target.value)}
+              maxLength={200}
+            />
+          </div>
+        </div>
+
+        <Button
+          onClick={gerarRecibo}
+          disabled={!podeGerar}
+          className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+        >
+          <FileText className="mr-2 h-4 w-4" />
+          Gerar recibo em PDF
+        </Button>
+        {!podeGerar && (
+          <p className="text-xs text-muted-foreground">
+            Preencha o valor, prestador, tomador, CNPJ e cidade para liberar a
+            geração do recibo.
+          </p>
+        )}
+      </div>
 
       <p className="text-xs text-muted-foreground">
         ⚠️ Cálculo estimado para conferência. As retenções e o recolhimento são
