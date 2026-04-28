@@ -588,6 +588,8 @@ export const FreeServices = () => {
         return <ProLaboreCalc />;
       case "inss":
         return <InssCalc />;
+      case "rpa":
+        return <RpaCalc />;
       default:
         return null;
     }
