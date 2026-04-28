@@ -18,6 +18,7 @@ export const SiteHeader = () => {
   }, []);
 
   const links = [
+    { label: "Serviços Gratuitos", href: "#servicos-gratuitos", highlight: true },
     { label: "Serviços", href: "#servicos" },
     { label: "Reformas", href: "#reformas" },
     { label: "Planos", href: "#planos" },
