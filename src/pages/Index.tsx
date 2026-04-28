@@ -1,6 +1,7 @@
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Hero } from "@/components/sections/Hero";
+import { FreeServices } from "@/components/sections/FreeServices";
 import { Services } from "@/components/sections/Services";
 import { Process } from "@/components/sections/Process";
 import { Reforms } from "@/components/sections/Reforms";
@@ -16,6 +17,7 @@ const Index = () => {
       <SiteHeader />
       <main>
         <Hero />
+        <FreeServices />
         <Services />
         <Process />
         <Reforms />
