@@ -110,28 +110,67 @@ const concepts: Record<ToolKey, { title: string; body: React.ReactNode }> = {
     ),
   },
   rpa: {
-    title: "O que é RPA?",
+    title: "RPA — Recibo de Pagamento Autônomo",
     body: (
       <>
         <p>
-          <strong>RPA</strong> é a sigla de <strong>Recibo de Pagamento
-          Autônomo</strong>, um documento usado para formalizar o pagamento
-          feito a profissionais autônomos, sem caracterizar vínculo
-          empregatício.
+          O cálculo e o pagamento dos impostos no <strong>RPA</strong> são
+          responsabilidade da empresa contratante. Contudo, é importante que o
+          autônomo conheça os tributos e descontos envolvidos para conferir os
+          valores recebidos, entender os limites de desconto, declarar os
+          recebimentos no IRPF e planejar suas finanças.
         </p>
         <p>
-          A emissão do RPA é feita pela empresa ou pessoa física contratante do
-          serviço prestado. Já o recebimento do RPA é feito por qualquer
-          profissional autônomo ou liberal que atua sem CNPJ — geralmente em
-          profissões como médicos, advogados, psicólogos, arquitetos e
-          engenheiros.
+          O cálculo do RPA envolve <strong>três tributos</strong> que incidem
+          na prestação de serviços: <strong>INSS</strong> (11% sobre o valor
+          recebido, com teto), o <strong>IRRF</strong> (calculado após a
+          dedução do INSS, conforme a tabela vigente) e o <strong>ISS</strong>{" "}
+          (alíquota municipal, geralmente entre 2% e 5%).
+        </p>
+
+        <h4 className="mt-4 font-display font-bold text-primary">INSS</h4>
+        <p>
+          O desconto do INSS é considerado para fins de aposentadoria e direito
+          a benefícios, como licença-maternidade e auxílio-doença.
         </p>
         <p>
-          Além de formalizar o pagamento, o RPA também serve para que o
-          contratante possa recolher e repassar os impostos que incidem sobre o
-          pagamento, que são: o <strong>IRRF</strong> (Imposto de Renda Retido
-          na Fonte), o <strong>INSS</strong> (Previdência Social) e o{" "}
-          <strong>ISS</strong> (Imposto Sobre Serviços).
+          Para calcular o INSS no RPA, soma-se todos os valores recebidos no
+          mês e aplica-se a alíquota de <strong>11%</strong>. Existe um{" "}
+          <strong>teto mensal</strong> de contribuição: se a soma dos
+          pagamentos ultrapassar esse limite, o desconto não deve exceder o
+          teto. O autônomo pode fornecer a cada contratante uma declaração
+          informando os valores de INSS já retidos no período. A empresa
+          contratante também recolhe <strong>20% de contribuição patronal</strong>{" "}
+          sobre o mesmo valor.
+        </p>
+
+        <h4 className="mt-4 font-display font-bold text-primary">IRRF</h4>
+        <p>
+          Para o <strong>Imposto de Renda Retido na Fonte</strong>, soma-se o
+          total recebido no mês, desconta-se o INSS e aplica-se a tabela
+          progressiva (até 27,5%). Desde a <strong>Lei nº 14.663/2023</strong>,
+          existem novas regras de desconto:
+        </p>
+        <ul className="ml-5 list-disc space-y-1">
+          <li>
+            <strong>Até R$ 5.000,00:</strong> IRRF isento.
+          </li>
+          <li>
+            <strong>Entre R$ 5.000,01 e R$ 7.350,00:</strong> desconto especial
+            calculado por: <em>R$ 978,62 − (0,133145 × rendimento tributável)</em>.
+          </li>
+          <li>
+            <strong>Acima de R$ 7.350,00:</strong> tabela progressiva padrão,
+            sem o desconto adicional.
+          </li>
+        </ul>
+
+        <h4 className="mt-4 font-display font-bold text-primary">ISS</h4>
+        <p>
+          O <strong>ISS</strong> (Imposto sobre Serviços) é municipal, com
+          alíquotas de <strong>2% a 5%</strong>. Em muitos municípios, a
+          empresa contratante é obrigada a reter e recolher o ISS na fonte. O
+          cálculo é simples: <em>valor do serviço × alíquota municipal</em>.
         </p>
       </>
     ),
