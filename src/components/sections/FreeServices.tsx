@@ -50,10 +50,10 @@ const tools: {
   },
   {
     key: "rpa",
-    title: "Impressão de Recibos RPA",
-    short: "Recibo de Pagamento Autônomo",
+    title: "Calculadora de RPA",
+    short: "INSS, IRRF e ISS sobre o recibo",
     icon: Receipt,
-    type: "info",
+    type: "calc",
   },
   {
     key: "agendamento",
