@@ -21,6 +21,7 @@ import {
   MessageCircle,
   ExternalLink,
 } from "lucide-react";
+import { jsPDF } from "jspdf";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 type ToolKey =
