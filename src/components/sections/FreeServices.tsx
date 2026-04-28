@@ -438,6 +438,133 @@ const InssCalc = () => {
   );
 };
 
+// ---------- Calculadora RPA ----------
+const TETO_INSS_RPA = 8157.41; // teto previdenciário vigente
+const RPA_FAIXA1 = 5000.0;
+const RPA_FAIXA2 = 7350.0;
+
+const RpaCalc = () => {
+  const [bruto, setBruto] = useState<string>("");
+  const [iss, setIss] = useState<string>("5");
+  const [inssRetidoOutros, setInssRetidoOutros] = useState<string>("");
+
+  const v = parseFloat(bruto.replace(",", ".")) || 0;
+  const aliqIss = parseFloat(iss.replace(",", ".")) || 0;
+  const inssOutros = parseFloat(inssRetidoOutros.replace(",", ".")) || 0;
+
+  const result = useMemo(() => {
+    // INSS 11% respeitando teto mensal (descontando o já retido por outros contratantes)
+    const tetoInss = TETO_INSS_RPA * 0.11;
+    const inssBruto = v * 0.11;
+    const inssDevido = Math.max(0, Math.min(inssBruto, tetoInss - inssOutros));
+
+    // Base IRRF = bruto - INSS
+    const baseIR = Math.max(0, v - inssDevido);
+    const irrfPadrao = calcIRRF(baseIR);
+
+    // Regra Lei 14.663/2023
+    let irrfFinal = irrfPadrao;
+    let regraIR = "Tabela progressiva padrão";
+    if (v <= RPA_FAIXA1) {
+      irrfFinal = 0;
+      regraIR = "Isento (até R$ 5.000,00)";
+    } else if (v <= RPA_FAIXA2) {
+      const desconto = 978.62 - 0.133145 * v;
+      irrfFinal = Math.max(0, irrfPadrao - Math.max(0, desconto));
+      regraIR = "Desconto especial (Lei 14.663/2023)";
+    }
+
+    // ISS municipal
+    const issValor = v * (aliqIss / 100);
+
+    const liquido = v - inssDevido - irrfFinal - issValor;
+
+    // Patronal (informativo)
+    const inssPatronal = v * 0.2;
+
+    return {
+      inssDevido,
+      irrfFinal,
+      regraIR,
+      issValor,
+      liquido,
+      inssPatronal,
+      baseIR,
+    };
+  }, [v, aliqIss, inssOutros]);
+
+  return (
+    <div className="space-y-4">
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div>
+          <Label htmlFor="rpa-bruto">Valor bruto do serviço (R$)</Label>
+          <Input
+            id="rpa-bruto"
+            type="number"
+            inputMode="decimal"
+            placeholder="Ex: 6000"
+            value={bruto}
+            onChange={(e) => setBruto(e.target.value)}
+            maxLength={10}
+          />
+        </div>
+        <div>
+          <Label htmlFor="rpa-iss">Alíquota ISS municipal (%)</Label>
+          <Input
+            id="rpa-iss"
+            type="number"
+            inputMode="decimal"
+            placeholder="2 a 5"
+            value={iss}
+            onChange={(e) => setIss(e.target.value)}
+            maxLength={5}
+          />
+        </div>
+      </div>
+      <div>
+        <Label htmlFor="rpa-inss-outros">
+          INSS já retido por outros contratantes no mês (R$){" "}
+          <span className="text-xs text-muted-foreground">(opcional)</span>
+        </Label>
+        <Input
+          id="rpa-inss-outros"
+          type="number"
+          inputMode="decimal"
+          placeholder="0,00"
+          value={inssRetidoOutros}
+          onChange={(e) => setInssRetidoOutros(e.target.value)}
+          maxLength={10}
+        />
+      </div>
+
+      {v > 0 && (
+        <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-2 text-sm">
+          <Row label="Valor bruto do serviço" value={fmtBRL(v)} />
+          <Row label="INSS (11%, com teto)" value={`- ${fmtBRL(result.inssDevido)}`} />
+          <Row
+            label={`IRRF — ${result.regraIR}`}
+            value={`- ${fmtBRL(result.irrfFinal)}`}
+          />
+          <Row label={`ISS (${aliqIss}%)`} value={`- ${fmtBRL(result.issValor)}`} />
+          <div className="my-2 h-px bg-border" />
+          <Row label="Líquido a receber" value={fmtBRL(result.liquido)} highlight />
+          <p className="pt-2 text-xs text-muted-foreground">
+            Base de cálculo do IRRF: <strong>{fmtBRL(result.baseIR)}</strong>.
+            Contribuição patronal da empresa (20%, informativo):{" "}
+            <strong>{fmtBRL(result.inssPatronal)}</strong>.
+          </p>
+        </div>
+      )}
+
+      <p className="text-xs text-muted-foreground">
+        ⚠️ Cálculo estimado para conferência. As retenções e o recolhimento são
+        responsabilidade da empresa contratante. Consulte-nos para apuração
+        precisa conforme o município e a sua situação.
+      </p>
+    </div>
+  );
+};
+
 const Row = ({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) => (
   <div className="flex items-center justify-between">
     <span className={highlight ? "font-semibold text-foreground" : "text-muted-foreground"}>
