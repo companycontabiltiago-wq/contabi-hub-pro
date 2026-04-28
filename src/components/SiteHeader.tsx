@@ -32,9 +32,18 @@ export const SiteHeader = () => {
           <img src={logo} alt="Company Contábil — Consultoria e Gestão de Negócios" className="h-16 w-auto md:h-20 object-contain" />
         </Link>
 
-        <nav className="hidden items-center gap-8 md:flex">
+        <nav className="hidden items-center gap-7 md:flex">
           {links.map(l => (
-            <a key={l.href} href={l.href} className="text-sm font-medium text-foreground/80 transition-colors hover:text-accent">
+            <a
+              key={l.href}
+              href={l.href}
+              className={
+                l.highlight
+                  ? "inline-flex items-center gap-1.5 rounded-full border border-accent/40 bg-accent/10 px-3 py-1.5 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-accent-foreground"
+                  : "text-sm font-medium text-foreground/80 transition-colors hover:text-accent"
+              }
+            >
+              {l.highlight && <span aria-hidden>🎁</span>}
               {l.label}
             </a>
           ))}
