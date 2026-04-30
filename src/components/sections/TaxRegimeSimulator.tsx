@@ -18,6 +18,16 @@ const fmtBRL = (v: number) =>
     maximumFractionDigits: 2,
   });
 
+// ---------- Alíquotas internas de ICMS por UF (operações internas, padrão) ----------
+// Referência: legislações estaduais vigentes em 2025/2026 (alíquota modal interna).
+// Valores podem variar conforme produto, benefício fiscal e substituição tributária.
+const ICMS_UF: Record<string, number> = {
+  AC: 19, AL: 20, AP: 18, AM: 20, BA: 20.5, CE: 20, DF: 20, ES: 17,
+  GO: 19, MA: 23, MT: 17, MS: 17, MG: 18, PA: 19, PB: 20, PR: 19.5,
+  PE: 20.5, PI: 22.5, RJ: 22, RN: 20, RS: 17, RO: 19.5, RR: 20,
+  SC: 17, SP: 18, SE: 22, TO: 20,
+};
+
 // ---------- Anexos do Simples Nacional (LC 155/2016) ----------
 type Faixa = { ate: number; aliq: number; deduz: number };
 
@@ -228,7 +238,14 @@ export const TaxRegimeSimulator = () => {
   const [atividade, setAtividade] = useState<"comercio" | "servico">("comercio");
   const [anexo, setAnexo] = useState("I");
   const [iss, setIss] = useState("5");
-  const [icms, setIcms] = useState("12");
+  const [uf, setUf] = useState<string>("SP");
+  const [icms, setIcms] = useState(String(ICMS_UF["SP"]));
+
+  // Atualiza ICMS automaticamente ao trocar UF
+  const handleUfChange = (novaUf: string) => {
+    setUf(novaUf);
+    if (ICMS_UF[novaUf] !== undefined) setIcms(String(ICMS_UF[novaUf]));
+  };
 
   const fm = parseFloat(faturamentoMes) || 0;
   const fa = parseFloat(faturamentoAno) || 0;
@@ -329,7 +346,7 @@ export const TaxRegimeSimulator = () => {
             </SelectContent>
           </Select>
         </div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-3 gap-2">
           <div>
             <Label>ISS (%)</Label>
             <Input
@@ -340,6 +357,23 @@ export const TaxRegimeSimulator = () => {
             />
           </div>
           <div>
+            <Label>UF (ICMS)</Label>
+            <Select value={uf} onValueChange={handleUfChange}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="max-h-64">
+                {Object.keys(ICMS_UF)
+                  .sort()
+                  .map((sigla) => (
+                    <SelectItem key={sigla} value={sigla}>
+                      {sigla} — {ICMS_UF[sigla]}%
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
             <Label>ICMS (%)</Label>
             <Input
               type="number"
@@ -347,6 +381,9 @@ export const TaxRegimeSimulator = () => {
               value={icms}
               onChange={(e) => setIcms(e.target.value)}
             />
+            <p className="mt-1 text-[10px] text-muted-foreground">
+              Alíquota interna padrão de {uf}. Edite se aplicável.
+            </p>
           </div>
         </div>
       </div>
