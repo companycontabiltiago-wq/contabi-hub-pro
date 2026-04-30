@@ -20,9 +20,11 @@ import {
   Gift,
   MessageCircle,
   ExternalLink,
+  Scale,
 } from "lucide-react";
 import { jsPDF } from "jspdf";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { TaxRegimeSimulator } from "./TaxRegimeSimulator";
 
 type ToolKey =
   | "nf"
@@ -30,7 +32,8 @@ type ToolKey =
   | "agendamento"
   | "custo-funcionario"
   | "pro-labore"
-  | "inss";
+  | "inss"
+  | "simulador-tributario";
 
 const fmtBRL = (v: number) =>
   v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
