@@ -18,6 +18,16 @@ const fmtBRL = (v: number) =>
     maximumFractionDigits: 2,
   });
 
+// ---------- Alíquotas internas de ICMS por UF (operações internas, padrão) ----------
+// Referência: legislações estaduais vigentes em 2025/2026 (alíquota modal interna).
+// Valores podem variar conforme produto, benefício fiscal e substituição tributária.
+const ICMS_UF: Record<string, number> = {
+  AC: 19, AL: 20, AP: 18, AM: 20, BA: 20.5, CE: 20, DF: 20, ES: 17,
+  GO: 19, MA: 23, MT: 17, MS: 17, MG: 18, PA: 19, PB: 20, PR: 19.5,
+  PE: 20.5, PI: 22.5, RJ: 22, RN: 20, RS: 17, RO: 19.5, RR: 20,
+  SC: 17, SP: 18, SE: 22, TO: 20,
+};
+
 // ---------- Anexos do Simples Nacional (LC 155/2016) ----------
 type Faixa = { ate: number; aliq: number; deduz: number };
 
