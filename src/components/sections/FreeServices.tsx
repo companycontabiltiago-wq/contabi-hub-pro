@@ -98,6 +98,33 @@ const tools: {
 
 // ---------- Conceitos ----------
 const concepts: Record<ToolKey, { title: string; body: React.ReactNode }> = {
+  "simulador-tributario": {
+    title: "Simulador Tributário de Regimes",
+    body: (
+      <>
+        <p>
+          Compare <strong>Simples Nacional</strong>, <strong>Lucro Presumido</strong>{" "}
+          e <strong>Lucro Real</strong> com base no faturamento e lucro da sua
+          empresa. O simulador já considera a{" "}
+          <strong>Reforma Tributária (IBS + CBS)</strong> com vigência plena
+          prevista para 2033.
+        </p>
+        <p>
+          <strong>Simples Nacional:</strong> DAS unificado, alíquotas de{" "}
+          <em>4% a 33%</em> conforme o anexo (I a V) e o RBT12.{" "}
+          <strong>Lucro Presumido:</strong> IRPJ/CSLL sobre presunção (8%/12%
+          para comércio, 32% para serviços), PIS 0,65% e COFINS 3% cumulativos.{" "}
+          <strong>Lucro Real:</strong> IRPJ/CSLL sobre o lucro efetivo, PIS
+          1,65% e COFINS 7,60% não cumulativos (com créditos).
+        </p>
+        <p className="text-sm text-muted-foreground">
+          ⚠️ Simulação indicativa. A escolha correta do regime exige análise
+          contábil completa (CNAE, folha, créditos). Consulte-nos para um
+          planejamento tributário personalizado.
+        </p>
+      </>
+    ),
+  },
   nf: {
     title: "O que é Nota Fiscal?",
     body: (
