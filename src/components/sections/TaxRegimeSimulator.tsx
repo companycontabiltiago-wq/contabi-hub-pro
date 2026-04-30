@@ -31,6 +31,55 @@ const ICMS_UF: Record<string, number> = {
 // ---------- Anexos do Simples Nacional (LC 155/2016) ----------
 type Faixa = { ate: number; aliq: number; deduz: number };
 
+// Partições (repartição dos tributos) por faixa — LC 155/2016
+// Colunas: IRPJ | CSLL | COFINS | PIS/Pasep | CPP | ICMS | ISS (quando aplicável)
+type Particao = {
+  IRPJ: number; CSLL: number; COFINS: number; PIS: number; CPP: number; ICMS?: number; ISS?: number;
+};
+
+const PARTICOES: Record<string, Particao[]> = {
+  I: [
+    { IRPJ: 5.5, CSLL: 3.5, COFINS: 12.74, PIS: 2.76, CPP: 41.5, ICMS: 34.0 },
+    { IRPJ: 5.5, CSLL: 3.5, COFINS: 12.74, PIS: 2.76, CPP: 41.5, ICMS: 34.0 },
+    { IRPJ: 5.5, CSLL: 3.5, COFINS: 12.74, PIS: 2.76, CPP: 42.0, ICMS: 33.5 },
+    { IRPJ: 5.5, CSLL: 3.5, COFINS: 12.74, PIS: 2.76, CPP: 42.0, ICMS: 33.5 },
+    { IRPJ: 5.5, CSLL: 3.5, COFINS: 12.74, PIS: 2.76, CPP: 42.0, ICMS: 33.5 },
+    { IRPJ: 13.5, CSLL: 10.0, COFINS: 28.27, PIS: 6.13, CPP: 42.1, ICMS: 0 },
+  ],
+  II: [
+    { IRPJ: 5.5, CSLL: 3.5, COFINS: 11.51, PIS: 2.49, CPP: 37.5, ICMS: 32.0 }, // + IPI 7.5
+    { IRPJ: 5.5, CSLL: 3.5, COFINS: 11.51, PIS: 2.49, CPP: 37.5, ICMS: 32.0 },
+    { IRPJ: 5.5, CSLL: 3.5, COFINS: 11.51, PIS: 2.49, CPP: 37.5, ICMS: 32.0 },
+    { IRPJ: 5.5, CSLL: 3.5, COFINS: 11.51, PIS: 2.49, CPP: 37.5, ICMS: 32.0 },
+    { IRPJ: 5.5, CSLL: 3.5, COFINS: 11.51, PIS: 2.49, CPP: 37.5, ICMS: 32.0 },
+    { IRPJ: 8.5, CSLL: 7.5, COFINS: 20.96, PIS: 4.54, CPP: 23.5, ICMS: 35.0 },
+  ],
+  III: [
+    { IRPJ: 4.0, CSLL: 3.5, COFINS: 12.82, PIS: 2.78, CPP: 43.4, ISS: 33.5 },
+    { IRPJ: 4.0, CSLL: 3.5, COFINS: 14.05, PIS: 3.05, CPP: 43.4, ISS: 32.0 },
+    { IRPJ: 4.0, CSLL: 3.5, COFINS: 13.64, PIS: 2.96, CPP: 43.4, ISS: 32.5 },
+    { IRPJ: 4.0, CSLL: 3.5, COFINS: 13.64, PIS: 2.96, CPP: 43.4, ISS: 32.5 },
+    { IRPJ: 4.0, CSLL: 3.5, COFINS: 12.82, PIS: 2.78, CPP: 43.4, ISS: 33.5 },
+    { IRPJ: 35.0, CSLL: 15.0, COFINS: 16.03, PIS: 3.47, CPP: 30.5, ISS: 0 },
+  ],
+  IV: [
+    { IRPJ: 18.8, CSLL: 15.2, COFINS: 17.67, PIS: 3.83, CPP: 0, ISS: 44.5 },
+    { IRPJ: 19.8, CSLL: 15.2, COFINS: 20.55, PIS: 4.45, CPP: 0, ISS: 40.0 },
+    { IRPJ: 20.8, CSLL: 15.2, COFINS: 19.73, PIS: 4.27, CPP: 0, ISS: 40.0 },
+    { IRPJ: 17.8, CSLL: 19.2, COFINS: 18.9, PIS: 4.1, CPP: 0, ISS: 40.0 },
+    { IRPJ: 18.8, CSLL: 19.2, COFINS: 18.08, PIS: 3.92, CPP: 0, ISS: 40.0 },
+    { IRPJ: 53.5, CSLL: 21.5, COFINS: 20.55, PIS: 4.45, CPP: 0, ISS: 0 },
+  ],
+  V: [
+    { IRPJ: 25.0, CSLL: 15.0, COFINS: 14.1, PIS: 3.05, CPP: 28.85, ISS: 14.0 },
+    { IRPJ: 23.0, CSLL: 15.0, COFINS: 14.1, PIS: 3.05, CPP: 27.85, ISS: 17.0 },
+    { IRPJ: 24.0, CSLL: 15.0, COFINS: 14.92, PIS: 3.23, CPP: 23.85, ISS: 19.0 },
+    { IRPJ: 21.0, CSLL: 15.0, COFINS: 15.74, PIS: 3.41, CPP: 23.85, ISS: 21.0 },
+    { IRPJ: 23.0, CSLL: 12.5, COFINS: 14.1, PIS: 3.05, CPP: 23.85, ISS: 23.5 },
+    { IRPJ: 35.0, CSLL: 15.5, COFINS: 16.44, PIS: 3.56, CPP: 29.5, ISS: 0 },
+  ],
+};
+
 const ANEXOS: Record<string, { nome: string; faixas: Faixa[] }> = {
   I: {
     nome: "Anexo I - Comércio",
