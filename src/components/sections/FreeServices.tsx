@@ -46,6 +46,13 @@ const tools: {
   type: "info" | "calc";
 }[] = [
   {
+    key: "simulador-tributario",
+    title: "Simulador Tributário de Regimes",
+    short: "Simples × Presumido × Real + Reforma 2026",
+    icon: Scale,
+    type: "calc",
+  },
+  {
     key: "nf",
     title: "Emissão de Notas Fiscais",
     short: "Comércio e Serviços",
