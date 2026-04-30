@@ -885,6 +885,8 @@ export const FreeServices = () => {
         return <InssCalc />;
       case "rpa":
         return <RpaCalc />;
+      case "simulador-tributario":
+        return <TaxRegimeSimulator />;
       default:
         return null;
     }
