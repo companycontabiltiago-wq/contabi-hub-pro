@@ -238,7 +238,14 @@ export const TaxRegimeSimulator = () => {
   const [atividade, setAtividade] = useState<"comercio" | "servico">("comercio");
   const [anexo, setAnexo] = useState("I");
   const [iss, setIss] = useState("5");
-  const [icms, setIcms] = useState("12");
+  const [uf, setUf] = useState<string>("SP");
+  const [icms, setIcms] = useState(String(ICMS_UF["SP"]));
+
+  // Atualiza ICMS automaticamente ao trocar UF
+  const handleUfChange = (novaUf: string) => {
+    setUf(novaUf);
+    if (ICMS_UF[novaUf] !== undefined) setIcms(String(ICMS_UF[novaUf]));
+  };
 
   const fm = parseFloat(faturamentoMes) || 0;
   const fa = parseFloat(faturamentoAno) || 0;
