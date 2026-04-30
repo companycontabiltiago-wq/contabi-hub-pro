@@ -1,0 +1,498 @@
+import { useMemo, useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { CheckCircle2, TrendingUp, Info } from "lucide-react";
+
+const fmtBRL = (v: number) =>
+  v.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    maximumFractionDigits: 2,
+  });
+
+// ---------- Anexos do Simples Nacional (LC 155/2016) ----------
+type Faixa = { ate: number; aliq: number; deduz: number };
+
+const ANEXOS: Record<string, { nome: string; faixas: Faixa[] }> = {
+  I: {
+    nome: "Anexo I - Comércio",
+    faixas: [
+      { ate: 180000, aliq: 0.04, deduz: 0 },
+      { ate: 360000, aliq: 0.073, deduz: 5940 },
+      { ate: 720000, aliq: 0.095, deduz: 13860 },
+      { ate: 1800000, aliq: 0.107, deduz: 22500 },
+      { ate: 3600000, aliq: 0.143, deduz: 87300 },
+      { ate: 4800000, aliq: 0.19, deduz: 378000 },
+    ],
+  },
+  II: {
+    nome: "Anexo II - Indústria",
+    faixas: [
+      { ate: 180000, aliq: 0.045, deduz: 0 },
+      { ate: 360000, aliq: 0.078, deduz: 5940 },
+      { ate: 720000, aliq: 0.1, deduz: 13860 },
+      { ate: 1800000, aliq: 0.112, deduz: 22500 },
+      { ate: 3600000, aliq: 0.147, deduz: 85500 },
+      { ate: 4800000, aliq: 0.3, deduz: 720000 },
+    ],
+  },
+  III: {
+    nome: "Anexo III - Serviços",
+    faixas: [
+      { ate: 180000, aliq: 0.06, deduz: 0 },
+      { ate: 360000, aliq: 0.112, deduz: 9360 },
+      { ate: 720000, aliq: 0.135, deduz: 17640 },
+      { ate: 1800000, aliq: 0.16, deduz: 35640 },
+      { ate: 3600000, aliq: 0.21, deduz: 125640 },
+      { ate: 4800000, aliq: 0.33, deduz: 648000 },
+    ],
+  },
+  IV: {
+    nome: "Anexo IV - Serviços (construção, limpeza)",
+    faixas: [
+      { ate: 180000, aliq: 0.045, deduz: 0 },
+      { ate: 360000, aliq: 0.09, deduz: 8100 },
+      { ate: 720000, aliq: 0.102, deduz: 12420 },
+      { ate: 1800000, aliq: 0.14, deduz: 39780 },
+      { ate: 3600000, aliq: 0.22, deduz: 183780 },
+      { ate: 4800000, aliq: 0.33, deduz: 828000 },
+    ],
+  },
+  V: {
+    nome: "Anexo V - Serviços intelectuais",
+    faixas: [
+      { ate: 180000, aliq: 0.155, deduz: 0 },
+      { ate: 360000, aliq: 0.18, deduz: 4500 },
+      { ate: 720000, aliq: 0.195, deduz: 9900 },
+      { ate: 1800000, aliq: 0.205, deduz: 17100 },
+      { ate: 3600000, aliq: 0.23, deduz: 62100 },
+      { ate: 4800000, aliq: 0.305, deduz: 540000 },
+    ],
+  },
+};
+
+function calcSimples(rbt12: number, receitaMes: number, anexo: string) {
+  const a = ANEXOS[anexo];
+  if (!a || rbt12 <= 0 || receitaMes <= 0)
+    return {
+      das: 0,
+      aliqEfet: 0,
+      aliqNom: 0,
+      deduz: 0,
+      faixa: "",
+    };
+  const faixa = a.faixas.find((f) => rbt12 <= f.ate) || a.faixas[a.faixas.length - 1];
+  const aliqEfet = Math.max(
+    0,
+    (rbt12 * faixa.aliq - faixa.deduz) / rbt12,
+  );
+  const das = receitaMes * aliqEfet;
+  const idx = a.faixas.indexOf(faixa);
+  return {
+    das,
+    aliqEfet,
+    aliqNom: faixa.aliq,
+    deduz: faixa.deduz,
+    faixa: `${idx + 1}ª Faixa`,
+  };
+}
+
+// ---------- Lucro Presumido ----------
+// Presunção IRPJ/CSLL depende da atividade
+function calcPresumido(
+  receitaMes: number,
+  atividade: "comercio" | "servico",
+  issRate: number,
+  icmsRate: number,
+) {
+  if (receitaMes <= 0)
+    return { total: 0, irpj: 0, csll: 0, pis: 0, cofins: 0, icmsIss: 0, aliq: 0 };
+
+  const presIRPJ = atividade === "comercio" ? 0.08 : 0.32;
+  const presCSLL = atividade === "comercio" ? 0.12 : 0.32;
+  const baseIRPJ = receitaMes * presIRPJ;
+  const baseCSLL = receitaMes * presCSLL;
+  const irpj = baseIRPJ * 0.15 + Math.max(0, baseIRPJ - 20000) * 0.1;
+  const csll = baseCSLL * 0.09;
+  const pis = receitaMes * 0.0065;
+  const cofins = receitaMes * 0.03;
+  const icmsIss =
+    atividade === "comercio"
+      ? receitaMes * (icmsRate / 100)
+      : receitaMes * (issRate / 100);
+  const total = irpj + csll + pis + cofins + icmsIss;
+  return {
+    total,
+    irpj,
+    csll,
+    pis,
+    cofins,
+    icmsIss,
+    aliq: total / receitaMes,
+  };
+}
+
+// ---------- Lucro Real ----------
+function calcReal(
+  receitaMes: number,
+  lucroMes: number,
+  atividade: "comercio" | "servico",
+  issRate: number,
+  icmsRate: number,
+) {
+  if (receitaMes <= 0)
+    return { total: 0, irpj: 0, csll: 0, pis: 0, cofins: 0, icmsIss: 0, aliq: 0 };
+  const lucro = Math.max(0, lucroMes);
+  const irpj = lucro * 0.15 + Math.max(0, lucro - 20000) * 0.1;
+  const csll = lucro * 0.09;
+  const pis = receitaMes * 0.0165;
+  const cofins = receitaMes * 0.076;
+  const icmsIss =
+    atividade === "comercio"
+      ? receitaMes * (icmsRate / 100)
+      : receitaMes * (issRate / 100);
+  const total = irpj + csll + pis + cofins + icmsIss;
+  return {
+    total,
+    irpj,
+    csll,
+    pis,
+    cofins,
+    icmsIss,
+    aliq: total / receitaMes,
+  };
+}
+
+const RegimeCard = ({
+  nome,
+  total,
+  aliq,
+  itens,
+  best,
+}: {
+  nome: string;
+  total: number;
+  aliq: number;
+  itens: { label: string; value: number }[];
+  best?: boolean;
+}) => (
+  <Card
+    className={`border p-5 ${
+      best
+        ? "border-accent/60 bg-accent/5 shadow-elegant"
+        : "border-border bg-card"
+    }`}
+  >
+    <div className="flex items-start justify-between">
+      <h5 className="font-display text-base font-bold text-primary">{nome}</h5>
+      {best && (
+        <span className="inline-flex items-center gap-1 rounded-full bg-accent px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent-foreground">
+          <CheckCircle2 className="h-3 w-3" /> Mais econômico
+        </span>
+      )}
+    </div>
+    <p className="mt-1 text-xs text-muted-foreground">
+      Alíquota efetiva: <strong>{(aliq * 100).toFixed(2)}%</strong>
+    </p>
+    <div className="mt-3 text-2xl font-bold text-primary">
+      {fmtBRL(total)}
+      <span className="ml-1 text-xs font-normal text-muted-foreground">/mês</span>
+    </div>
+    <div className="mt-3 space-y-1 border-t border-border pt-3 text-xs">
+      {itens.map((i) => (
+        <div key={i.label} className="flex justify-between">
+          <span className="text-muted-foreground">{i.label}</span>
+          <span className="font-medium text-foreground">{fmtBRL(i.value)}</span>
+        </div>
+      ))}
+      <div className="mt-2 flex justify-between border-t border-border pt-2">
+        <span className="font-semibold text-primary">Total anual</span>
+        <span className="font-bold text-primary">{fmtBRL(total * 12)}</span>
+      </div>
+    </div>
+  </Card>
+);
+
+export const TaxRegimeSimulator = () => {
+  const [faturamentoMes, setFatMes] = useState("50000");
+  const [faturamentoAno, setFatAno] = useState("600000");
+  const [lucroMes, setLucroMes] = useState("10000");
+  const [atividade, setAtividade] = useState<"comercio" | "servico">("comercio");
+  const [anexo, setAnexo] = useState("I");
+  const [iss, setIss] = useState("5");
+  const [icms, setIcms] = useState("12");
+
+  const fm = parseFloat(faturamentoMes) || 0;
+  const fa = parseFloat(faturamentoAno) || 0;
+  const lm = parseFloat(lucroMes) || 0;
+  const issN = parseFloat(iss) || 0;
+  const icmsN = parseFloat(icms) || 0;
+  const margem = fm > 0 ? (lm / fm) * 100 : 0;
+
+  const simples = useMemo(
+    () => calcSimples(fa, fm, anexo),
+    [fa, fm, anexo],
+  );
+  const presumido = useMemo(
+    () => calcPresumido(fm, atividade, issN, icmsN),
+    [fm, atividade, issN, icmsN],
+  );
+  const real = useMemo(
+    () => calcReal(fm, lm, atividade, issN, icmsN),
+    [fm, lm, atividade, issN, icmsN],
+  );
+
+  const best = useMemo(() => {
+    const arr = [
+      { k: "simples", v: simples.das },
+      { k: "presumido", v: presumido.total },
+      { k: "real", v: real.total },
+    ].filter((x) => x.v > 0);
+    if (!arr.length) return null;
+    return arr.reduce((a, b) => (a.v < b.v ? a : b)).k;
+  }, [simples.das, presumido.total, real.total]);
+
+  // IBS + CBS (Reforma 2033 - sistema pleno, estimativa sem créditos)
+  const ibsCbs2033 = fm * 0.265;
+  const cargaAtualReferencia =
+    best === "simples" ? simples.das : best === "presumido" ? presumido.total : real.total;
+
+  return (
+    <div className="space-y-6">
+      {/* Inputs */}
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <Label>Faturamento mensal (R$)</Label>
+          <Input
+            type="number"
+            inputMode="decimal"
+            value={faturamentoMes}
+            onChange={(e) => setFatMes(e.target.value)}
+          />
+        </div>
+        <div>
+          <Label>Faturamento anual / RBT12 (R$)</Label>
+          <Input
+            type="number"
+            inputMode="decimal"
+            value={faturamentoAno}
+            onChange={(e) => setFatAno(e.target.value)}
+          />
+        </div>
+        <div>
+          <Label>Lucro mensal (R$) — para Lucro Real</Label>
+          <Input
+            type="number"
+            inputMode="decimal"
+            value={lucroMes}
+            onChange={(e) => setLucroMes(e.target.value)}
+          />
+          <p className="mt-1 text-xs text-muted-foreground">
+            Margem: {margem.toFixed(2)}%
+          </p>
+        </div>
+        <div>
+          <Label>Atividade</Label>
+          <Select
+            value={atividade}
+            onValueChange={(v: "comercio" | "servico") => setAtividade(v)}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="comercio">Comércio / Indústria</SelectItem>
+              <SelectItem value="servico">Serviços</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label>Anexo do Simples Nacional</Label>
+          <Select value={anexo} onValueChange={setAnexo}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.entries(ANEXOS).map(([k, v]) => (
+                <SelectItem key={k} value={k}>
+                  {v.nome}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <div>
+            <Label>ISS (%)</Label>
+            <Input
+              type="number"
+              inputMode="decimal"
+              value={iss}
+              onChange={(e) => setIss(e.target.value)}
+            />
+          </div>
+          <div>
+            <Label>ICMS (%)</Label>
+            <Input
+              type="number"
+              inputMode="decimal"
+              value={icms}
+              onChange={(e) => setIcms(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Banner melhor regime */}
+      {best && fm > 0 && fa > 0 && (
+        <div className="flex items-center gap-3 rounded-lg border border-accent/40 bg-gradient-accent p-4 text-accent-foreground">
+          <CheckCircle2 className="h-6 w-6 flex-shrink-0" />
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider opacity-90">
+              Regime mais econômico
+            </p>
+            <p className="font-display text-lg font-bold">
+              {best === "simples"
+                ? "Simples Nacional"
+                : best === "presumido"
+                  ? "Lucro Presumido"
+                  : "Lucro Real"}{" "}
+              — {fmtBRL(cargaAtualReferencia)}/mês
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Cards comparativos */}
+      <div className="grid gap-4 md:grid-cols-3">
+        <RegimeCard
+          nome="Simples Nacional"
+          total={simples.das}
+          aliq={simples.aliqEfet}
+          best={best === "simples"}
+          itens={[
+            { label: "DAS unificado", value: simples.das },
+          ]}
+        />
+        <RegimeCard
+          nome="Lucro Presumido"
+          total={presumido.total}
+          aliq={presumido.aliq}
+          best={best === "presumido"}
+          itens={[
+            { label: "IRPJ", value: presumido.irpj },
+            { label: "CSLL", value: presumido.csll },
+            { label: "PIS", value: presumido.pis },
+            { label: "COFINS", value: presumido.cofins },
+            {
+              label: atividade === "comercio" ? "ICMS" : "ISS",
+              value: presumido.icmsIss,
+            },
+          ]}
+        />
+        <RegimeCard
+          nome="Lucro Real"
+          total={real.total}
+          aliq={real.aliq}
+          best={best === "real"}
+          itens={[
+            { label: "IRPJ", value: real.irpj },
+            { label: "CSLL", value: real.csll },
+            { label: "PIS", value: real.pis },
+            { label: "COFINS", value: real.cofins },
+            {
+              label: atividade === "comercio" ? "ICMS" : "ISS",
+              value: real.icmsIss,
+            },
+          ]}
+        />
+      </div>
+
+      {/* Detalhe Simples */}
+      {simples.das > 0 && (
+        <div className="rounded-lg border border-border bg-muted/30 p-4 text-sm">
+          <h5 className="mb-2 font-display font-bold text-primary">
+            📊 Partição do Simples Nacional
+          </h5>
+          <div className="grid gap-1 sm:grid-cols-2">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Faturamento Anual (RBT12):</span>
+              <span className="font-medium">{fmtBRL(fa)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Anexo:</span>
+              <span className="font-medium">{ANEXOS[anexo].nome}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Faixa identificada:</span>
+              <span className="font-medium">{simples.faixa}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Alíquota Nominal:</span>
+              <span className="font-medium">{(simples.aliqNom * 100).toFixed(2)}%</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Valor a Deduzir:</span>
+              <span className="font-medium">{fmtBRL(simples.deduz)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Alíquota Efetiva:</span>
+              <span className="font-bold text-accent">
+                {(simples.aliqEfet * 100).toFixed(2)}%
+              </span>
+            </div>
+          </div>
+          <p className="mt-2 text-xs text-muted-foreground">
+            Fórmula: <em>((RBT12 × Alíq. Nominal) − Dedução) / RBT12</em>
+          </p>
+        </div>
+      )}
+
+      {/* Reforma tributária IBS + CBS */}
+      {fm > 0 && (
+        <div className="rounded-lg border border-primary/30 bg-primary/5 p-4">
+          <div className="flex items-center gap-2">
+            <TrendingUp className="h-5 w-5 text-primary" />
+            <h5 className="font-display font-bold text-primary">
+              Reforma Tributária — IBS + CBS (vigência plena 2033)
+            </h5>
+          </div>
+          <div className="mt-3 grid gap-3 sm:grid-cols-3 text-sm">
+            <div>
+              <p className="text-xs text-muted-foreground">CBS (Federal) — 8,8%</p>
+              <p className="font-bold text-primary">{fmtBRL(fm * 0.088)}/mês</p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">IBS (Est./Mun.) — 17,7%</p>
+              <p className="font-bold text-primary">{fmtBRL(fm * 0.177)}/mês</p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">IVA Total — ~26,5%</p>
+              <p className="font-bold text-accent">{fmtBRL(ibsCbs2033)}/mês</p>
+            </div>
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            <Info className="mr-1 inline h-3 w-3" />
+            Estimativa bruta, sem considerar créditos de IVA (não cumulativo). A
+            transição é gradual: 2026 (fase de testes), 2027 (CBS plena), 2033
+            (sistema pleno).
+          </p>
+        </div>
+      )}
+
+      <p className="text-xs text-muted-foreground">
+        ⚠️ Simulação para fins de planejamento. O enquadramento ideal depende de
+        análise detalhada (CNAE, folha, créditos, benefícios fiscais). Consulte
+        a Company Contábil para um diagnóstico preciso.
+      </p>
+    </div>
+  );
+};
