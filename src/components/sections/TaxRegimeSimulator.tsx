@@ -346,7 +346,7 @@ export const TaxRegimeSimulator = () => {
             </SelectContent>
           </Select>
         </div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-3 gap-2">
           <div>
             <Label>ISS (%)</Label>
             <Input
@@ -357,6 +357,23 @@ export const TaxRegimeSimulator = () => {
             />
           </div>
           <div>
+            <Label>UF (ICMS)</Label>
+            <Select value={uf} onValueChange={handleUfChange}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="max-h-64">
+                {Object.keys(ICMS_UF)
+                  .sort()
+                  .map((sigla) => (
+                    <SelectItem key={sigla} value={sigla}>
+                      {sigla} — {ICMS_UF[sigla]}%
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
             <Label>ICMS (%)</Label>
             <Input
               type="number"
@@ -364,6 +381,9 @@ export const TaxRegimeSimulator = () => {
               value={icms}
               onChange={(e) => setIcms(e.target.value)}
             />
+            <p className="mt-1 text-[10px] text-muted-foreground">
+              Alíquota interna padrão de {uf}. Edite se aplicável.
+            </p>
           </div>
         </div>
       </div>
