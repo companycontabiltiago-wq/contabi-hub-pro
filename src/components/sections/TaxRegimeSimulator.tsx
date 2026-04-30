@@ -574,6 +574,99 @@ export const TaxRegimeSimulator = () => {
         </div>
       )}
 
+      {/* Tabela de Faixas e Partição do Anexo selecionado */}
+      <div className="rounded-lg border border-border bg-card p-4">
+        <h5 className="mb-1 font-display font-bold text-primary">
+          📑 {ANEXOS[anexo].nome} — Faixas e Repartição dos Tributos
+        </h5>
+        <p className="mb-3 text-xs text-muted-foreground">
+          Tabela oficial conforme LC 155/2016. A "partição" define como o DAS é
+          distribuído internamente entre IRPJ, CSLL, COFINS, PIS, CPP (INSS
+          patronal) e {anexo === "I" || anexo === "II" ? "ICMS" : "ISS"}.
+        </p>
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[720px] border-collapse text-xs">
+            <thead className="bg-primary text-primary-foreground">
+              <tr>
+                <th className="border border-border px-2 py-2 text-left">Faixa</th>
+                <th className="border border-border px-2 py-2 text-left">Receita em 12 meses (RBT12)</th>
+                <th className="border border-border px-2 py-2 text-center">Alíq. Nominal</th>
+                <th className="border border-border px-2 py-2 text-right">Dedução (R$)</th>
+                <th className="border border-border px-2 py-2 text-center">IRPJ</th>
+                <th className="border border-border px-2 py-2 text-center">CSLL</th>
+                <th className="border border-border px-2 py-2 text-center">COFINS</th>
+                <th className="border border-border px-2 py-2 text-center">PIS</th>
+                <th className="border border-border px-2 py-2 text-center">CPP</th>
+                <th className="border border-border px-2 py-2 text-center">
+                  {anexo === "I" || anexo === "II" ? "ICMS" : "ISS"}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {ANEXOS[anexo].faixas.map((f, i) => {
+                const p = PARTICOES[anexo][i];
+                const ativa = simples.faixa === `${i + 1}ª Faixa`;
+                const limInf = i === 0 ? 0 : ANEXOS[anexo].faixas[i - 1].ate;
+                return (
+                  <tr
+                    key={i}
+                    className={
+                      ativa
+                        ? "bg-accent/15 font-semibold"
+                        : i % 2
+                          ? "bg-muted/40"
+                          : "bg-card"
+                    }
+                  >
+                    <td className="border border-border px-2 py-1.5">{i + 1}ª</td>
+                    <td className="border border-border px-2 py-1.5">
+                      {fmtBRL(limInf)} — {fmtBRL(f.ate)}
+                    </td>
+                    <td className="border border-border px-2 py-1.5 text-center">
+                      {(f.aliq * 100).toFixed(2)}%
+                    </td>
+                    <td className="border border-border px-2 py-1.5 text-right">
+                      {f.deduz === 0 ? "—" : fmtBRL(f.deduz)}
+                    </td>
+                    <td className="border border-border px-2 py-1.5 text-center">{p.IRPJ.toFixed(2)}%</td>
+                    <td className="border border-border px-2 py-1.5 text-center">{p.CSLL.toFixed(2)}%</td>
+                    <td className="border border-border px-2 py-1.5 text-center">{p.COFINS.toFixed(2)}%</td>
+                    <td className="border border-border px-2 py-1.5 text-center">{p.PIS.toFixed(2)}%</td>
+                    <td className="border border-border px-2 py-1.5 text-center">{p.CPP.toFixed(2)}%</td>
+                    <td className="border border-border px-2 py-1.5 text-center">
+                      {(anexo === "I" || anexo === "II" ? p.ICMS : p.ISS)?.toFixed(2)}%
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <div className="mt-3 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
+          <p>
+            <strong className="text-foreground">CPP:</strong> Contribuição
+            Previdenciária Patronal (INSS da empresa).
+          </p>
+          <p>
+            <strong className="text-foreground">6ª faixa:</strong> ICMS/ISS não
+            são recolhidos no DAS — são apurados fora do Simples.
+          </p>
+          {anexo === "II" && (
+            <p className="sm:col-span-2">
+              <strong className="text-foreground">Anexo II:</strong> inclui
+              também IPI de 7,5% na partição (industrialização).
+            </p>
+          )}
+          {anexo === "V" && (
+            <p className="sm:col-span-2">
+              <strong className="text-foreground">Fator R:</strong> serviços
+              intelectuais com folha ≥ 28% da receita migram para o Anexo III
+              (carga menor).
+            </p>
+          )}
+        </div>
+      </div>
+
       <p className="text-xs text-muted-foreground">
         ⚠️ Simulação para fins de planejamento. O enquadramento ideal depende de
         análise detalhada (CNAE, folha, créditos, benefícios fiscais). Consulte
