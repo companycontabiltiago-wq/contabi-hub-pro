@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -9,7 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CheckCircle2, TrendingUp, Info } from "lucide-react";
+import { CheckCircle2, TrendingUp, Info, Printer } from "lucide-react";
+import { gerarRelatorioPDF } from "@/lib/pdfReport";
 
 const fmtBRL = (v: number) =>
   v.toLocaleString("pt-BR", {
