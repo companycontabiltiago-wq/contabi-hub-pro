@@ -25,8 +25,9 @@ import {
 import { jsPDF } from "jspdf";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { TaxRegimeSimulator } from "./TaxRegimeSimulator";
-import { gerarRelatorioPDF } from "@/lib/pdfReport";
-import { Printer } from "lucide-react";
+import { gerarRelatorioPDF, loadBrand } from "@/lib/pdfReport";
+import { Printer, Settings } from "lucide-react";
+import { BrandSettingsDialog } from "@/components/BrandSettingsDialog";
 
 type ToolKey =
   | "nf"
@@ -348,6 +349,9 @@ const CustoFuncionarioCalc = () => {
     const ferias = (valor + valor / 3) / 12;
     const decimoTerceiro = valor / 12;
     const fgtsProvisoes = (ferias + decimoTerceiro) * 0.08;
+    // Provisão da multa rescisória de 40% sobre todo FGTS depositado no mês
+    // (inclui FGTS do salário e FGTS sobre férias e 13º)
+    const multaFgts40 = (fgts + fgtsProvisoes) * 0.4;
     const total =
       valor +
       inssPatronal +
@@ -355,9 +359,20 @@ const CustoFuncionarioCalc = () => {
       ratTerceiros +
       ferias +
       decimoTerceiro +
-      fgtsProvisoes;
+      fgtsProvisoes +
+      multaFgts40;
     const pct = valor > 0 ? ((total / valor - 1) * 100).toFixed(1) : "0";
-    return { inssPatronal, fgts, ratTerceiros, ferias, decimoTerceiro, fgtsProvisoes, total, pct };
+    return {
+      inssPatronal,
+      fgts,
+      ratTerceiros,
+      ferias,
+      decimoTerceiro,
+      fgtsProvisoes,
+      multaFgts40,
+      total,
+      pct,
+    };
   }, [valor]);
 
   return (
@@ -384,6 +399,7 @@ const CustoFuncionarioCalc = () => {
           <Row label="Provisão de férias + 1/3" value={fmtBRL(result.ferias)} />
           <Row label="Provisão de 13º salário" value={fmtBRL(result.decimoTerceiro)} />
           <Row label="FGTS sobre provisões" value={fmtBRL(result.fgtsProvisoes)} />
+          <Row label="Provisão multa rescisória FGTS (40%)" value={fmtBRL(result.multaFgts40)} />
           <div className="my-2 h-px bg-border" />
           <Row
             label="Custo total mensal"
@@ -392,6 +408,7 @@ const CustoFuncionarioCalc = () => {
           />
           <p className="pt-1 text-xs text-muted-foreground">
             Equivale a aproximadamente <strong>{result.pct}%</strong> acima do salário bruto.
+            A multa de 40% é provisionada mensalmente sobre o FGTS depositado, prevendo eventual rescisão sem justa causa.
           </p>
           <Button
             type="button"
@@ -400,7 +417,7 @@ const CustoFuncionarioCalc = () => {
             onClick={() =>
               gerarRelatorioPDF({
                 title: "Custo Total com Funcionário",
-                subtitle: "Relatório de cortesia — Company Contábil",
+                subtitle: "Relatório de cortesia",
                 fileName: `Custo_Funcionario_${Date.now()}.pdf`,
                 sections: [
                   {
@@ -418,16 +435,19 @@ const CustoFuncionarioCalc = () => {
                       { label: "Provisão de férias + 1/3", value: fmtBRL(result.ferias) },
                       { label: "Provisão de 13º salário", value: fmtBRL(result.decimoTerceiro) },
                       { label: "FGTS sobre provisões", value: fmtBRL(result.fgtsProvisoes) },
+                      { label: "Provisão multa rescisória FGTS (40%)", value: fmtBRL(result.multaFgts40) },
                       { divider: true },
                       { label: "Custo total mensal", value: fmtBRL(result.total), highlight: true },
                       { label: "Custo total anual (×12)", value: fmtBRL(result.total * 12) },
                       { note: `Equivale a aproximadamente ${result.pct}% acima do salário bruto.` },
+                      { note: "A multa de 40% sobre o FGTS é provisionada todos os meses, prevendo a rescisão sem justa causa, e incide sobre o total depositado de FGTS (salário + provisões de férias e 13º)." },
                     ],
                   },
                 ],
               })
             }
           >
+
             <Printer className="mr-2 h-4 w-4" />
             Imprimir relatório
           </Button>
@@ -690,19 +710,55 @@ const RpaCalc = () => {
   }, [v, aliqIss, inssOutros]);
 
   const gerarRecibo = () => {
+    const brand = loadBrand();
+    const hexToRgb = (hex: string): [number, number, number] => {
+      const m = hex.replace("#", "");
+      return [0, 2, 4].map((i) => parseInt(m.substring(i, i + 2), 16)) as [number, number, number];
+    };
+    const [pr, pg, pb] = hexToRgb(brand.primaryColor || "#0F2048");
+
     const doc = new jsPDF({ unit: "mm", format: "a4" });
     const pageW = 210;
+    const pageH = 297;
     const margin = 18;
     let y = margin;
 
-    doc.setFillColor(15, 32, 72);
-    doc.rect(0, 0, pageW, 22, "F");
+    // Cabeçalho com marca
+    const headerH = brand.logoDataUrl ? 30 : 24;
+    doc.setFillColor(pr, pg, pb);
+    doc.rect(0, 0, pageW, headerH, "F");
+
+    let titleX = pageW / 2;
+    let titleAlign: "center" | "left" = "center";
+    if (brand.logoDataUrl) {
+      try {
+        const fmt = brand.logoDataUrl.startsWith("data:image/jpeg") ? "JPEG" : "PNG";
+        doc.addImage(brand.logoDataUrl, fmt, margin, 5, 20, 20);
+        titleX = margin + 26;
+        titleAlign = "left";
+      } catch {
+        /* logo inválida */
+      }
+    }
     doc.setTextColor(255, 255, 255);
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(16);
-    doc.text("RECIBO DE PAGAMENTO A AUTÔNOMO (RPA)", pageW / 2, 14, { align: "center" });
+    doc.setFontSize(13);
+    doc.text(brand.companyName.toUpperCase(), titleX, 12, { align: titleAlign });
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+    doc.text("RECIBO DE PAGAMENTO A AUTÔNOMO (RPA)", titleX, 19, { align: titleAlign });
 
-    y = 32;
+    const contatos = [brand.phone, brand.email, brand.website].filter(Boolean) as string[];
+    if (contatos.length) {
+      doc.setFontSize(8);
+      let cy = 9;
+      contatos.forEach((c) => {
+        doc.text(c, pageW - margin, cy, { align: "right" });
+        cy += 4;
+      });
+    }
+
+    y = headerH + 8;
     doc.setTextColor(20, 20, 20);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(11);
@@ -710,7 +766,7 @@ const RpaCalc = () => {
     doc.text(`Data: ${new Date(data).toLocaleDateString("pt-BR")}`, pageW - margin, y, { align: "right" });
 
     y += 10;
-    doc.setDrawColor(15, 32, 72);
+    doc.setDrawColor(pr, pg, pb);
     doc.setLineWidth(0.4);
     doc.rect(margin, y, pageW - margin * 2, 14);
     doc.setFont("helvetica", "bold");
@@ -731,7 +787,9 @@ const RpaCalc = () => {
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
+    doc.setTextColor(pr, pg, pb);
     doc.text("Demonstrativo de cálculo", margin, y);
+    doc.setTextColor(20, 20, 20);
     y += 2;
     doc.setLineWidth(0.2);
     doc.line(margin, y, pageW - margin, y);
@@ -758,7 +816,9 @@ const RpaCalc = () => {
     y += 6;
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
+    doc.setTextColor(pr, pg, pb);
     doc.text("Identificação das partes", margin, y);
+    doc.setTextColor(20, 20, 20);
     y += 2;
     doc.setLineWidth(0.2);
     doc.line(margin, y, pageW - margin, y);
@@ -783,12 +843,24 @@ const RpaCalc = () => {
     y += 5;
     doc.text(prestador || "Assinatura do prestador", pageW / 2, y, { align: "center" });
 
+    // Rodapé com marca
+    const footerLine =
+      [brand.companyName, brand.address, brand.phone, brand.email, brand.website]
+        .filter(Boolean)
+        .join(" · ") || "Calculadora gratuita.";
+    doc.setDrawColor(pr, pg, pb);
+    doc.setLineWidth(0.3);
+    doc.line(margin, pageH - 16, pageW - margin, pageH - 16);
     doc.setFontSize(8);
     doc.setTextColor(120, 120, 120);
+    doc.text(footerLine, pageW / 2, pageH - 11, {
+      align: "center",
+      maxWidth: pageW - margin * 2,
+    });
     doc.text(
-      "Documento gerado por Company Contábil — calculadora gratuita. Conferência sujeita à legislação vigente.",
+      "Documento informativo — conferência sujeita à legislação vigente.",
       pageW / 2,
-      287,
+      pageH - 7,
       { align: "center" },
     );
 
@@ -977,6 +1049,7 @@ const Row = ({ label, value, highlight }: { label: string; value: string; highli
 // ---------- Componente principal ----------
 export const FreeServices = () => {
   const [openTool, setOpenTool] = useState<ToolKey | null>(null);
+  const [brandOpen, setBrandOpen] = useState(false);
 
   const renderCalc = () => {
     switch (openTool) {
@@ -1017,6 +1090,16 @@ export const FreeServices = () => {
             da sua empresa. Use as calculadoras, conheça os conceitos e fale
             conosco para acionar o serviço.
           </p>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="mt-5"
+            onClick={() => setBrandOpen(true)}
+          >
+            <Settings className="mr-2 h-4 w-4" />
+            Personalizar PDFs (logo, nome e contatos)
+          </Button>
         </div>
 
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -1103,6 +1186,8 @@ export const FreeServices = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      <BrandSettingsDialog open={brandOpen} onOpenChange={setBrandOpen} />
     </section>
   );
 };
