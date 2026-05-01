@@ -348,6 +348,9 @@ const CustoFuncionarioCalc = () => {
     const ferias = (valor + valor / 3) / 12;
     const decimoTerceiro = valor / 12;
     const fgtsProvisoes = (ferias + decimoTerceiro) * 0.08;
+    // Provisão da multa rescisória de 40% sobre todo FGTS depositado no mês
+    // (inclui FGTS do salário e FGTS sobre férias e 13º)
+    const multaFgts40 = (fgts + fgtsProvisoes) * 0.4;
     const total =
       valor +
       inssPatronal +
@@ -355,9 +358,20 @@ const CustoFuncionarioCalc = () => {
       ratTerceiros +
       ferias +
       decimoTerceiro +
-      fgtsProvisoes;
+      fgtsProvisoes +
+      multaFgts40;
     const pct = valor > 0 ? ((total / valor - 1) * 100).toFixed(1) : "0";
-    return { inssPatronal, fgts, ratTerceiros, ferias, decimoTerceiro, fgtsProvisoes, total, pct };
+    return {
+      inssPatronal,
+      fgts,
+      ratTerceiros,
+      ferias,
+      decimoTerceiro,
+      fgtsProvisoes,
+      multaFgts40,
+      total,
+      pct,
+    };
   }, [valor]);
 
   return (
