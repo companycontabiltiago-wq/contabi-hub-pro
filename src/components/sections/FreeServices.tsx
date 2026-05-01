@@ -1186,6 +1186,8 @@ export const FreeServices = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      <BrandSettingsDialog open={brandOpen} onOpenChange={setBrandOpen} />
     </section>
   );
 };
