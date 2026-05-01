@@ -446,16 +446,7 @@ const CustoFuncionarioCalc = () => {
               })
             }
           >
-                      { divider: true },
-                      { label: "Custo total mensal", value: fmtBRL(result.total), highlight: true },
-                      { label: "Custo total anual (×12)", value: fmtBRL(result.total * 12) },
-                      { note: `Equivale a aproximadamente ${result.pct}% acima do salário bruto.` },
-                    ],
-                  },
-                ],
-              })
-            }
-          >
+
             <Printer className="mr-2 h-4 w-4" />
             Imprimir relatório
           </Button>
