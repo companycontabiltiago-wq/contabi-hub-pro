@@ -393,6 +393,44 @@ const CustoFuncionarioCalc = () => {
           <p className="pt-1 text-xs text-muted-foreground">
             Equivale a aproximadamente <strong>{result.pct}%</strong> acima do salário bruto.
           </p>
+          <Button
+            type="button"
+            variant="outline"
+            className="mt-3 w-full"
+            onClick={() =>
+              gerarRelatorioPDF({
+                title: "Custo Total com Funcionário",
+                subtitle: "Relatório de cortesia — Company Contábil",
+                fileName: `Custo_Funcionario_${Date.now()}.pdf`,
+                sections: [
+                  {
+                    title: "Dados informados",
+                    rows: [
+                      { label: "Salário bruto mensal", value: fmtBRL(valor) },
+                    ],
+                  },
+                  {
+                    title: "Encargos e provisões",
+                    rows: [
+                      { label: "INSS patronal (20%)", value: fmtBRL(result.inssPatronal) },
+                      { label: "FGTS (8%)", value: fmtBRL(result.fgts) },
+                      { label: "RAT + Terceiros (~5,8%)", value: fmtBRL(result.ratTerceiros) },
+                      { label: "Provisão de férias + 1/3", value: fmtBRL(result.ferias) },
+                      { label: "Provisão de 13º salário", value: fmtBRL(result.decimoTerceiro) },
+                      { label: "FGTS sobre provisões", value: fmtBRL(result.fgtsProvisoes) },
+                      { divider: true },
+                      { label: "Custo total mensal", value: fmtBRL(result.total), highlight: true },
+                      { label: "Custo total anual (×12)", value: fmtBRL(result.total * 12) },
+                      { note: `Equivale a aproximadamente ${result.pct}% acima do salário bruto.` },
+                    ],
+                  },
+                ],
+              })
+            }
+          >
+            <Printer className="mr-2 h-4 w-4" />
+            Imprimir relatório
+          </Button>
         </div>
       )}
     </div>
