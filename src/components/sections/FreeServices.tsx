@@ -398,6 +398,7 @@ const CustoFuncionarioCalc = () => {
           <Row label="Provisão de férias + 1/3" value={fmtBRL(result.ferias)} />
           <Row label="Provisão de 13º salário" value={fmtBRL(result.decimoTerceiro)} />
           <Row label="FGTS sobre provisões" value={fmtBRL(result.fgtsProvisoes)} />
+          <Row label="Provisão multa rescisória FGTS (40%)" value={fmtBRL(result.multaFgts40)} />
           <div className="my-2 h-px bg-border" />
           <Row
             label="Custo total mensal"
@@ -406,6 +407,7 @@ const CustoFuncionarioCalc = () => {
           />
           <p className="pt-1 text-xs text-muted-foreground">
             Equivale a aproximadamente <strong>{result.pct}%</strong> acima do salário bruto.
+            A multa de 40% é provisionada mensalmente sobre o FGTS depositado, prevendo eventual rescisão sem justa causa.
           </p>
           <Button
             type="button"
@@ -414,7 +416,7 @@ const CustoFuncionarioCalc = () => {
             onClick={() =>
               gerarRelatorioPDF({
                 title: "Custo Total com Funcionário",
-                subtitle: "Relatório de cortesia — Company Contábil",
+                subtitle: "Relatório de cortesia",
                 fileName: `Custo_Funcionario_${Date.now()}.pdf`,
                 sections: [
                   {
@@ -432,6 +434,18 @@ const CustoFuncionarioCalc = () => {
                       { label: "Provisão de férias + 1/3", value: fmtBRL(result.ferias) },
                       { label: "Provisão de 13º salário", value: fmtBRL(result.decimoTerceiro) },
                       { label: "FGTS sobre provisões", value: fmtBRL(result.fgtsProvisoes) },
+                      { label: "Provisão multa rescisória FGTS (40%)", value: fmtBRL(result.multaFgts40) },
+                      { divider: true },
+                      { label: "Custo total mensal", value: fmtBRL(result.total), highlight: true },
+                      { label: "Custo total anual (×12)", value: fmtBRL(result.total * 12) },
+                      { note: `Equivale a aproximadamente ${result.pct}% acima do salário bruto.` },
+                      { note: "A multa de 40% sobre o FGTS é provisionada todos os meses, prevendo a rescisão sem justa causa, e incide sobre o total depositado de FGTS (salário + provisões de férias e 13º)." },
+                    ],
+                  },
+                ],
+              })
+            }
+          >
                       { divider: true },
                       { label: "Custo total mensal", value: fmtBRL(result.total), highlight: true },
                       { label: "Custo total anual (×12)", value: fmtBRL(result.total * 12) },
