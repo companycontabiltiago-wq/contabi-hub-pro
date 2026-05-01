@@ -1090,6 +1090,16 @@ export const FreeServices = () => {
             da sua empresa. Use as calculadoras, conheça os conceitos e fale
             conosco para acionar o serviço.
           </p>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="mt-5"
+            onClick={() => setBrandOpen(true)}
+          >
+            <Settings className="mr-2 h-4 w-4" />
+            Personalizar PDFs (logo, nome e contatos)
+          </Button>
         </div>
 
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
