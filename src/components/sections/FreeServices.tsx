@@ -25,8 +25,9 @@ import {
 import { jsPDF } from "jspdf";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { TaxRegimeSimulator } from "./TaxRegimeSimulator";
-import { gerarRelatorioPDF } from "@/lib/pdfReport";
-import { Printer } from "lucide-react";
+import { gerarRelatorioPDF, loadBrand } from "@/lib/pdfReport";
+import { Printer, Settings } from "lucide-react";
+import { BrandSettingsDialog } from "@/components/BrandSettingsDialog";
 
 type ToolKey =
   | "nf"
