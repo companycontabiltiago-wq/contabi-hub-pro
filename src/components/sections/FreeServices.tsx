@@ -533,6 +533,41 @@ const InssCalc = () => {
           <p className="pt-1 text-xs text-muted-foreground">
             Alíquota efetiva: <strong>{aliq}%</strong> (cálculo progressivo).
           </p>
+          <Button
+            type="button"
+            variant="outline"
+            className="mt-3 w-full"
+            onClick={() =>
+              gerarRelatorioPDF({
+                title: "Cálculo de INSS — Empregado",
+                subtitle: "Relatório de cortesia — Company Contábil",
+                fileName: `INSS_${Date.now()}.pdf`,
+                sections: [
+                  {
+                    title: "Demonstrativo",
+                    rows: [
+                      { label: "Salário de contribuição", value: fmtBRL(v) },
+                      { label: "INSS devido", value: fmtBRL(inss), highlight: true },
+                      { label: "Alíquota efetiva", value: `${aliq}%` },
+                    ],
+                  },
+                  {
+                    title: "Tabela progressiva vigente",
+                    rows: [
+                      { label: "Até R$ 1.518,00", value: "7,5%" },
+                      { label: "De R$ 1.518,01 a R$ 2.793,88", value: "9,0%" },
+                      { label: "De R$ 2.793,89 a R$ 4.190,83", value: "12,0%" },
+                      { label: "De R$ 4.190,84 a R$ 8.157,41 (teto)", value: "14,0%" },
+                      { note: "Cálculo progressivo: cada faixa é tributada por sua respectiva alíquota." },
+                    ],
+                  },
+                ],
+              })
+            }
+          >
+            <Printer className="mr-2 h-4 w-4" />
+            Imprimir relatório
+          </Button>
         </div>
       )}
 
