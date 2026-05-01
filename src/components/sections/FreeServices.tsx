@@ -709,19 +709,55 @@ const RpaCalc = () => {
   }, [v, aliqIss, inssOutros]);
 
   const gerarRecibo = () => {
+    const brand = loadBrand();
+    const hexToRgb = (hex: string): [number, number, number] => {
+      const m = hex.replace("#", "");
+      return [0, 2, 4].map((i) => parseInt(m.substring(i, i + 2), 16)) as [number, number, number];
+    };
+    const [pr, pg, pb] = hexToRgb(brand.primaryColor || "#0F2048");
+
     const doc = new jsPDF({ unit: "mm", format: "a4" });
     const pageW = 210;
+    const pageH = 297;
     const margin = 18;
     let y = margin;
 
-    doc.setFillColor(15, 32, 72);
-    doc.rect(0, 0, pageW, 22, "F");
+    // Cabeçalho com marca
+    const headerH = brand.logoDataUrl ? 30 : 24;
+    doc.setFillColor(pr, pg, pb);
+    doc.rect(0, 0, pageW, headerH, "F");
+
+    let titleX = pageW / 2;
+    let titleAlign: "center" | "left" = "center";
+    if (brand.logoDataUrl) {
+      try {
+        const fmt = brand.logoDataUrl.startsWith("data:image/jpeg") ? "JPEG" : "PNG";
+        doc.addImage(brand.logoDataUrl, fmt, margin, 5, 20, 20);
+        titleX = margin + 26;
+        titleAlign = "left";
+      } catch {
+        /* logo inválida */
+      }
+    }
     doc.setTextColor(255, 255, 255);
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(16);
-    doc.text("RECIBO DE PAGAMENTO A AUTÔNOMO (RPA)", pageW / 2, 14, { align: "center" });
+    doc.setFontSize(13);
+    doc.text(brand.companyName.toUpperCase(), titleX, 12, { align: titleAlign });
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+    doc.text("RECIBO DE PAGAMENTO A AUTÔNOMO (RPA)", titleX, 19, { align: titleAlign });
 
-    y = 32;
+    const contatos = [brand.phone, brand.email, brand.website].filter(Boolean) as string[];
+    if (contatos.length) {
+      doc.setFontSize(8);
+      let cy = 9;
+      contatos.forEach((c) => {
+        doc.text(c, pageW - margin, cy, { align: "right" });
+        cy += 4;
+      });
+    }
+
+    y = headerH + 8;
     doc.setTextColor(20, 20, 20);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(11);
@@ -729,7 +765,7 @@ const RpaCalc = () => {
     doc.text(`Data: ${new Date(data).toLocaleDateString("pt-BR")}`, pageW - margin, y, { align: "right" });
 
     y += 10;
-    doc.setDrawColor(15, 32, 72);
+    doc.setDrawColor(pr, pg, pb);
     doc.setLineWidth(0.4);
     doc.rect(margin, y, pageW - margin * 2, 14);
     doc.setFont("helvetica", "bold");
@@ -750,7 +786,9 @@ const RpaCalc = () => {
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
+    doc.setTextColor(pr, pg, pb);
     doc.text("Demonstrativo de cálculo", margin, y);
+    doc.setTextColor(20, 20, 20);
     y += 2;
     doc.setLineWidth(0.2);
     doc.line(margin, y, pageW - margin, y);
@@ -777,7 +815,9 @@ const RpaCalc = () => {
     y += 6;
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
+    doc.setTextColor(pr, pg, pb);
     doc.text("Identificação das partes", margin, y);
+    doc.setTextColor(20, 20, 20);
     y += 2;
     doc.setLineWidth(0.2);
     doc.line(margin, y, pageW - margin, y);
@@ -802,12 +842,24 @@ const RpaCalc = () => {
     y += 5;
     doc.text(prestador || "Assinatura do prestador", pageW / 2, y, { align: "center" });
 
+    // Rodapé com marca
+    const footerLine =
+      [brand.companyName, brand.address, brand.phone, brand.email, brand.website]
+        .filter(Boolean)
+        .join(" · ") || "Calculadora gratuita.";
+    doc.setDrawColor(pr, pg, pb);
+    doc.setLineWidth(0.3);
+    doc.line(margin, pageH - 16, pageW - margin, pageH - 16);
     doc.setFontSize(8);
     doc.setTextColor(120, 120, 120);
+    doc.text(footerLine, pageW / 2, pageH - 11, {
+      align: "center",
+      maxWidth: pageW - margin * 2,
+    });
     doc.text(
-      "Documento gerado por Company Contábil — calculadora gratuita. Conferência sujeita à legislação vigente.",
+      "Documento informativo — conferência sujeita à legislação vigente.",
       pageW / 2,
-      287,
+      pageH - 7,
       { align: "center" },
     );
 
