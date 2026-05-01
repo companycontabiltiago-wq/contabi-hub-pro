@@ -669,6 +669,105 @@ export const TaxRegimeSimulator = () => {
         </div>
       </div>
 
+      {fm > 0 && fa > 0 && (
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full"
+          onClick={() =>
+            gerarRelatorioPDF({
+              title: "Simulador Tributário de Regimes",
+              subtitle: "Comparativo Simples × Presumido × Real + Reforma 2033",
+              fileName: `Simulador_Tributario_${Date.now()}.pdf`,
+              sections: [
+                {
+                  title: "Parâmetros informados",
+                  rows: [
+                    { label: "Faturamento mensal", value: fmtBRL(fm) },
+                    { label: "Faturamento anual / RBT12", value: fmtBRL(fa) },
+                    { label: "Lucro mensal (Lucro Real)", value: fmtBRL(lm) },
+                    { label: "Margem de lucro", value: `${margem.toFixed(2)}%` },
+                    { label: "Atividade", value: atividade === "comercio" ? "Comércio / Indústria" : "Serviços" },
+                    { label: "Anexo do Simples", value: ANEXOS[anexo].nome },
+                    { label: "ISS", value: `${issN.toFixed(2)}%` },
+                    { label: `ICMS (${uf})`, value: `${icmsN.toFixed(2)}%` },
+                  ],
+                },
+                {
+                  title: "Simples Nacional",
+                  rows: [
+                    { label: "Faixa identificada", value: simples.faixa || "—" },
+                    { label: "Alíquota nominal", value: `${(simples.aliqNom * 100).toFixed(2)}%` },
+                    { label: "Valor a deduzir", value: fmtBRL(simples.deduz) },
+                    { label: "Alíquota efetiva", value: `${(simples.aliqEfet * 100).toFixed(2)}%` },
+                    { divider: true },
+                    { label: "DAS mensal", value: fmtBRL(simples.das), highlight: best === "simples" },
+                    { label: "Total anual estimado", value: fmtBRL(simples.das * 12) },
+                  ],
+                },
+                {
+                  title: "Lucro Presumido",
+                  rows: [
+                    { label: "IRPJ", value: fmtBRL(presumido.irpj) },
+                    { label: "CSLL", value: fmtBRL(presumido.csll) },
+                    { label: "PIS (0,65%)", value: fmtBRL(presumido.pis) },
+                    { label: "COFINS (3%)", value: fmtBRL(presumido.cofins) },
+                    { label: atividade === "comercio" ? `ICMS (${icmsN}%)` : `ISS (${issN}%)`, value: fmtBRL(presumido.icmsIss) },
+                    { divider: true },
+                    { label: "Total mensal", value: fmtBRL(presumido.total), highlight: best === "presumido" },
+                    { label: "Alíquota efetiva", value: `${(presumido.aliq * 100).toFixed(2)}%` },
+                    { label: "Total anual estimado", value: fmtBRL(presumido.total * 12) },
+                  ],
+                },
+                {
+                  title: "Lucro Real",
+                  rows: [
+                    { label: "IRPJ (15% + adicional 10%)", value: fmtBRL(real.irpj) },
+                    { label: "CSLL (9%)", value: fmtBRL(real.csll) },
+                    { label: "PIS (1,65% não-cumulativo)", value: fmtBRL(real.pis) },
+                    { label: "COFINS (7,6% não-cumulativo)", value: fmtBRL(real.cofins) },
+                    { label: atividade === "comercio" ? `ICMS (${icmsN}%)` : `ISS (${issN}%)`, value: fmtBRL(real.icmsIss) },
+                    { divider: true },
+                    { label: "Total mensal", value: fmtBRL(real.total), highlight: best === "real" },
+                    { label: "Alíquota efetiva", value: `${(real.aliq * 100).toFixed(2)}%` },
+                    { label: "Total anual estimado", value: fmtBRL(real.total * 12) },
+                  ],
+                },
+                {
+                  title: "Conclusão",
+                  rows: [
+                    {
+                      label: "Regime mais econômico",
+                      value:
+                        best === "simples"
+                          ? "Simples Nacional"
+                          : best === "presumido"
+                            ? "Lucro Presumido"
+                            : "Lucro Real",
+                      highlight: true,
+                    },
+                    { label: "Carga tributária mensal", value: fmtBRL(cargaAtualReferencia) },
+                    { label: "Carga tributária anual", value: fmtBRL(cargaAtualReferencia * 12) },
+                  ],
+                },
+                {
+                  title: "Reforma Tributária — IBS + CBS (vigência plena 2033)",
+                  rows: [
+                    { label: "CBS Federal (8,8%)", value: `${fmtBRL(fm * 0.088)}/mês` },
+                    { label: "IBS Estadual/Municipal (17,7%)", value: `${fmtBRL(fm * 0.177)}/mês` },
+                    { label: "IVA Total (~26,5%)", value: `${fmtBRL(ibsCbs2033)}/mês`, highlight: true },
+                    { note: "Estimativa bruta sem créditos do IVA não-cumulativo. Transição: 2026 testes, 2027 CBS plena, 2033 sistema pleno." },
+                  ],
+                },
+              ],
+            })
+          }
+        >
+          <Printer className="mr-2 h-4 w-4" />
+          Imprimir relatório comparativo
+        </Button>
+      )}
+
       <p className="text-xs text-muted-foreground">
         ⚠️ Simulação para fins de planejamento. O enquadramento ideal depende de
         análise detalhada (CNAE, folha, créditos, benefícios fiscais). Consulte
