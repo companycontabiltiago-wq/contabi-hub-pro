@@ -471,6 +471,34 @@ const ProLaboreCalc = () => {
           <Row label="IRRF" value={`- ${fmtBRL(result.irrf)}`} />
           <div className="my-2 h-px bg-border" />
           <Row label="Líquido a receber" value={fmtBRL(result.liquido)} highlight />
+          <Button
+            type="button"
+            variant="outline"
+            className="mt-3 w-full"
+            onClick={() =>
+              gerarRelatorioPDF({
+                title: "Cálculo de Pró-labore",
+                subtitle: "Relatório de cortesia — Company Contábil",
+                fileName: `Pro_Labore_${Date.now()}.pdf`,
+                sections: [
+                  {
+                    title: "Demonstrativo",
+                    rows: [
+                      { label: "Pró-labore bruto", value: fmtBRL(v) },
+                      { label: "(-) INSS sócio (11%, com teto)", value: fmtBRL(result.inss) },
+                      { label: "(-) IRRF (tabela progressiva)", value: fmtBRL(result.irrf) },
+                      { divider: true },
+                      { label: "Líquido a receber", value: fmtBRL(result.liquido), highlight: true },
+                      { note: "Pró-labore é a remuneração mensal de sócios administradores. Não há FGTS, 13º nem férias, mas contribui para a aposentadoria do sócio." },
+                    ],
+                  },
+                ],
+              })
+            }
+          >
+            <Printer className="mr-2 h-4 w-4" />
+            Imprimir relatório
+          </Button>
         </div>
       )}
     </div>
