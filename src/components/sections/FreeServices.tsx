@@ -25,6 +25,8 @@ import {
 import { jsPDF } from "jspdf";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { TaxRegimeSimulator } from "./TaxRegimeSimulator";
+import { gerarRelatorioPDF } from "@/lib/pdfReport";
+import { Printer } from "lucide-react";
 
 type ToolKey =
   | "nf"
