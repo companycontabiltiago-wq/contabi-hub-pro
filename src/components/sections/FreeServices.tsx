@@ -1049,6 +1049,7 @@ const Row = ({ label, value, highlight }: { label: string; value: string; highli
 // ---------- Componente principal ----------
 export const FreeServices = () => {
   const [openTool, setOpenTool] = useState<ToolKey | null>(null);
+  const [brandOpen, setBrandOpen] = useState(false);
 
   const renderCalc = () => {
     switch (openTool) {
