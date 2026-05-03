@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -30,7 +31,87 @@ const artigos = [
   },
 ];
 
+const PAGE_TITLE =
+  "Contabilidade Médica | PJ Médico, Empresa Inativa e IRPF | Company Contábil";
+const PAGE_DESCRIPTION =
+  "Contabilidade especializada para médicos: abertura de PJ Médico, obrigações de empresa inativa e declaração de IRPF com deduções e Carnê-Leão. Reduza impostos com segurança.";
+const PAGE_KEYWORDS =
+  "contabilidade médica, PJ médico, contador para médicos, empresa inativa, IRPF médicos, carnê-leão, livro-caixa, simples nacional médicos";
+const PAGE_URL = "https://www.companycontabil.com.br/contabilidade-medica";
+const PAGE_IMAGE =
+  "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f2645e76-5c82-4a52-800e-776ee84d44df/id-preview-202d2cda--7ef9e1cd-7663-496b-940d-8752a5b04149.lovable.app-1777001883869.png";
+
+const setMeta = (selector: string, attr: string, value: string) => {
+  let el = document.head.querySelector<HTMLMetaElement | HTMLLinkElement>(selector);
+  if (!el) {
+    if (selector.startsWith("link")) {
+      el = document.createElement("link");
+      (el as HTMLLinkElement).rel = "canonical";
+    } else {
+      el = document.createElement("meta");
+      const match = selector.match(/\[(name|property)="([^"]+)"\]/);
+      if (match) el.setAttribute(match[1], match[2]);
+    }
+    document.head.appendChild(el);
+  }
+  el.setAttribute(attr, value);
+};
+
 const ContabilidadeMedica = () => {
+  useEffect(() => {
+    const previousTitle = document.title;
+    document.title = PAGE_TITLE;
+
+    setMeta('meta[name="description"]', "content", PAGE_DESCRIPTION);
+    setMeta('meta[name="keywords"]', "content", PAGE_KEYWORDS);
+    setMeta('meta[name="author"]', "content", "Company Contábil");
+    setMeta('link[rel="canonical"]', "href", PAGE_URL);
+
+    setMeta('meta[property="og:type"]', "content", "article");
+    setMeta('meta[property="og:title"]', "content", PAGE_TITLE);
+    setMeta('meta[property="og:description"]', "content", PAGE_DESCRIPTION);
+    setMeta('meta[property="og:url"]', "content", PAGE_URL);
+    setMeta('meta[property="og:image"]', "content", PAGE_IMAGE);
+    setMeta('meta[property="og:site_name"]', "content", "Company Contábil");
+    setMeta('meta[property="og:locale"]', "content", "pt_BR");
+
+    setMeta('meta[name="twitter:card"]', "content", "summary_large_image");
+    setMeta('meta[name="twitter:title"]', "content", PAGE_TITLE);
+    setMeta('meta[name="twitter:description"]', "content", PAGE_DESCRIPTION);
+    setMeta('meta[name="twitter:image"]', "content", PAGE_IMAGE);
+
+    const ldId = "ld-contabilidade-medica";
+    let ld = document.getElementById(ldId) as HTMLScriptElement | null;
+    if (!ld) {
+      ld = document.createElement("script");
+      ld.id = ldId;
+      ld.type = "application/ld+json";
+      document.head.appendChild(ld);
+    }
+    ld.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      name: PAGE_TITLE,
+      description: PAGE_DESCRIPTION,
+      url: PAGE_URL,
+      inLanguage: "pt-BR",
+      publisher: {
+        "@type": "Organization",
+        name: "Company Contábil",
+      },
+      hasPart: artigos.map((a) => ({
+        "@type": "Article",
+        headline: a.titulo,
+        description: a.resumo,
+        url: `https://www.companycontabil.com.br${a.href}`,
+      })),
+    });
+
+    return () => {
+      document.title = previousTitle;
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
