@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound.tsx";
 import Auth from "./pages/Auth.tsx";
 import ClientArea from "./pages/ClientArea.tsx";
 import Admin from "./pages/Admin.tsx";
+import ContabilidadeMedica from "./pages/ContabilidadeMedica.tsx";
 
 const queryClient = new QueryClient();
 
