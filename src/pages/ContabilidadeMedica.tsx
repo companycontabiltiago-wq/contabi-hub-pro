@@ -55,7 +55,7 @@ const ContabilidadeMedica = () => {
         <section className="py-12 md:py-16">
           <div className="container">
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {artigos.map(({ icon: Icon, titulo, resumo }) => (
+              {artigos.map(({ icon: Icon, titulo, resumo, href }) => (
                 <Card
                   key={titulo}
                   className="group flex flex-col overflow-hidden transition-all hover:-translate-y-1 hover:shadow-elegant"
@@ -71,9 +71,11 @@ const ContabilidadeMedica = () => {
                       {titulo}
                     </h2>
                     <p className="mb-6 flex-1 text-sm text-muted-foreground">{resumo}</p>
-                    <Button variant="link" className="w-fit p-0 text-accent hover:text-accent/80">
-                      Leia a matéria completa
-                      <ArrowRight className="ml-1 h-4 w-4" />
+                    <Button asChild variant="link" className="w-fit p-0 text-accent hover:text-accent/80">
+                      <Link to={href}>
+                        Leia a matéria completa
+                        <ArrowRight className="ml-1 h-4 w-4" />
+                      </Link>
                     </Button>
                   </CardContent>
                 </Card>
