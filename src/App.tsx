@@ -23,6 +23,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/area-cliente" element={<ClientArea />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/contabilidade-medica" element={<ContabilidadeMedica />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
