@@ -9,6 +9,9 @@ import Auth from "./pages/Auth.tsx";
 import ClientArea from "./pages/ClientArea.tsx";
 import Admin from "./pages/Admin.tsx";
 import ContabilidadeMedica from "./pages/ContabilidadeMedica.tsx";
+import PjMedico from "./pages/artigos/PjMedico.tsx";
+import EmpresaInativa from "./pages/artigos/EmpresaInativa.tsx";
+import IrpfMedicos from "./pages/artigos/IrpfMedicos.tsx";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +27,9 @@ const App = () => (
           <Route path="/area-cliente" element={<ClientArea />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/contabilidade-medica" element={<ContabilidadeMedica />} />
+          <Route path="/contabilidade-medica/pj-medico" element={<PjMedico />} />
+          <Route path="/contabilidade-medica/empresa-inativa" element={<EmpresaInativa />} />
+          <Route path="/contabilidade-medica/irpf-medicos" element={<IrpfMedicos />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
