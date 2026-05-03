@@ -12,19 +12,21 @@ const artigos = [
     titulo: "PJ Médico: vale a pena abrir uma empresa?",
     resumo:
       "Entenda como a constituição de uma Pessoa Jurídica pode reduzir significativamente a carga tributária do médico, comparando o IRPF (até 27,5%) com o regime do Simples Nacional ou Lucro Presumido.",
+    href: "/contabilidade-medica/pj-medico",
   },
   {
     icon: Building2,
     titulo: "Empresa Inativa: o que fazer?",
     resumo:
       "Mesmo sem faturamento, sua empresa precisa cumprir obrigações acessórias. Saiba como manter a regularidade, evitar multas e decidir entre manter inativa ou encerrar o CNPJ.",
-    Icon: Building2,
+    href: "/contabilidade-medica/empresa-inativa",
   },
   {
     icon: FileText,
     titulo: "IRPF para Médicos: deduções e cuidados",
     resumo:
       "Despesas com cursos, equipamentos, livro-caixa e o famoso Carnê-Leão. Conheça as principais deduções permitidas e como evitar cair na malha fina da Receita Federal.",
+    href: "/contabilidade-medica/irpf-medicos",
   },
 ];
 
