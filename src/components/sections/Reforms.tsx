@@ -133,12 +133,12 @@ export const Reforms = () => {
     <section id="reformas" className="py-20 md:py-28">
       <div className="container">
         <div className="mx-auto max-w-2xl text-center">
-          <span className="text-xs font-semibold uppercase tracking-widest text-accent">Atualizações</span>
+          <span className="text-xs font-semibold uppercase tracking-widest text-accent">Notícias</span>
           <h2 className="mt-3 font-display text-3xl font-bold text-primary md:text-5xl text-balance">
-            Tudo sobre as Reformas em um só lugar
+            Notícias e atualizações em um só lugar
           </h2>
           <p className="mt-4 text-muted-foreground">
-            Acompanhe as principais mudanças tributárias, trabalhistas e previdenciárias que impactam seu negócio.
+            Acompanhe as últimas notícias sobre Reforma Tributária, Simples Nacional, Portal Nacional do ISS e demais mudanças que impactam seu negócio.
           </p>
         </div>
 
