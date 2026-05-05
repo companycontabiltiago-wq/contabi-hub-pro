@@ -20,7 +20,8 @@ export const SiteHeader = () => {
   const links = [
     { label: "Serviços Gratuitos", href: "#servicos-gratuitos", highlight: true },
     { label: "Serviços", href: "#servicos" },
-    { label: "Notícias", href: "#reformas" },
+    { label: "MEI & Aberturas", href: "/mei" },
+    { label: "Notícias", href: "/#reformas" },
     { label: "Planos", href: "#planos" },
     { label: "Contato", href: "#contato" },
   ];

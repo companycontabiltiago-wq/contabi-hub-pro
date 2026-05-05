@@ -12,6 +12,7 @@ import ContabilidadeMedica from "./pages/ContabilidadeMedica.tsx";
 import PjMedico from "./pages/artigos/PjMedico.tsx";
 import EmpresaInativa from "./pages/artigos/EmpresaInativa.tsx";
 import IrpfMedicos from "./pages/artigos/IrpfMedicos.tsx";
+import Mei from "./pages/Mei.tsx";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/contabilidade-medica/pj-medico" element={<PjMedico />} />
           <Route path="/contabilidade-medica/empresa-inativa" element={<EmpresaInativa />} />
           <Route path="/contabilidade-medica/irpf-medicos" element={<IrpfMedicos />} />
+          <Route path="/mei" element={<Mei />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
