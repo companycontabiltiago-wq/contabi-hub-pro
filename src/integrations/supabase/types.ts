@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      client_documents: {
+        Row: {
+          category: Database["public"]["Enums"]["document_category"]
+          created_at: string
+          file_name: string
+          file_path: string
+          file_size: number | null
+          id: string
+          mime_type: string | null
+          notes: string | null
+          owner_id: string
+          uploaded_by: string
+        }
+        Insert: {
+          category?: Database["public"]["Enums"]["document_category"]
+          created_at?: string
+          file_name: string
+          file_path: string
+          file_size?: number | null
+          id?: string
+          mime_type?: string | null
+          notes?: string | null
+          owner_id: string
+          uploaded_by: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["document_category"]
+          created_at?: string
+          file_name?: string
+          file_path?: string
+          file_size?: number | null
+          id?: string
+          mime_type?: string | null
+          notes?: string | null
+          owner_id?: string
+          uploaded_by?: string
+        }
+        Relationships: []
+      }
       client_resources: {
         Row: {
           created_at: string
@@ -192,6 +231,12 @@ export type Database = {
     Enums: {
       app_role: "admin" | "client"
       business_segment: "comercio" | "servico" | "industria" | "outros"
+      document_category:
+        | "fiscal"
+        | "folha"
+        | "contabil"
+        | "societario"
+        | "outros"
       news_category: "tributaria" | "trabalhista" | "previdenciaria"
       tax_regime:
         | "mei"
@@ -328,6 +373,13 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "client"],
       business_segment: ["comercio", "servico", "industria", "outros"],
+      document_category: [
+        "fiscal",
+        "folha",
+        "contabil",
+        "societario",
+        "outros",
+      ],
       news_category: ["tributaria", "trabalhista", "previdenciaria"],
       tax_regime: [
         "mei",
