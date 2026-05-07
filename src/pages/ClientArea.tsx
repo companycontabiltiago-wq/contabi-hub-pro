@@ -40,6 +40,7 @@ const ClientArea = () => {
       setProfile(p);
       setResources((r as Resource[]) || []);
       setIsAdmin(!!roles?.some((x: any) => x.role === "admin"));
+      setUserId(session.user.id);
       setLoading(false);
     })();
 
