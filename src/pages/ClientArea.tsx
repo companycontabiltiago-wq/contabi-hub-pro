@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { LogOut, ExternalLink, FileText, Receipt, Users, Calendar, Settings, ShieldCheck } from "lucide-react";
 import logo from "@/assets/logo-company.jpeg";
+import ClientDocuments from "@/components/ClientDocuments";
 
 type Resource = { id: string; title: string; description: string | null; url: string; icon: string | null };
 type Profile = { full_name: string | null; company_name: string | null };
@@ -17,6 +18,7 @@ const ClientArea = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [resources, setResources] = useState<Resource[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -38,6 +40,7 @@ const ClientArea = () => {
       setProfile(p);
       setResources((r as Resource[]) || []);
       setIsAdmin(!!roles?.some((x: any) => x.role === "admin"));
+      setUserId(session.user.id);
       setLoading(false);
     })();
 
@@ -111,6 +114,12 @@ const ClientArea = () => {
                 </a>
               );
             })}
+          </div>
+        )}
+
+        {userId && (
+          <div className="mt-12">
+            <ClientDocuments userId={userId} isAdmin={isAdmin} />
           </div>
         )}
       </main>
