@@ -116,6 +116,12 @@ const ClientArea = () => {
             })}
           </div>
         )}
+
+        {userId && (
+          <div className="mt-12">
+            <ClientDocuments userId={userId} isAdmin={isAdmin} />
+          </div>
+        )}
       </main>
     </div>
   );
