@@ -18,6 +18,7 @@ const ClientArea = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [resources, setResources] = useState<Resource[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
