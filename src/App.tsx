@@ -13,6 +13,7 @@ import PjMedico from "./pages/artigos/PjMedico.tsx";
 import EmpresaInativa from "./pages/artigos/EmpresaInativa.tsx";
 import IrpfMedicos from "./pages/artigos/IrpfMedicos.tsx";
 import Mei from "./pages/Mei.tsx";
+import ResetPassword from "./pages/ResetPassword.tsx";
 
 const queryClient = new QueryClient();
 
