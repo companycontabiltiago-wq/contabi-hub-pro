@@ -13,6 +13,7 @@ import PjMedico from "./pages/artigos/PjMedico.tsx";
 import EmpresaInativa from "./pages/artigos/EmpresaInativa.tsx";
 import IrpfMedicos from "./pages/artigos/IrpfMedicos.tsx";
 import Mei from "./pages/Mei.tsx";
+import ResetPassword from "./pages/ResetPassword.tsx";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/area-cliente" element={<ClientArea />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/contabilidade-medica" element={<ContabilidadeMedica />} />
