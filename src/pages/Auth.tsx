@@ -108,10 +108,14 @@ const Auth = () => {
         </Link>
 
         <h1 className="text-center font-display text-2xl font-bold text-primary">
-          {mode === "signup" ? "Crie sua conta" : "Acesse sua conta"}
+          {mode === "signup" ? "Crie sua conta" : mode === "forgot" ? "Recuperar senha" : "Acesse sua conta"}
         </h1>
         <p className="mt-1 text-center text-sm text-muted-foreground">
-          {mode === "signup" ? "Tenha acesso à área exclusiva de clientes" : "Entre na área do cliente"}
+          {mode === "signup"
+            ? "Tenha acesso à área exclusiva de clientes"
+            : mode === "forgot"
+            ? "Informe seu e-mail para receber o link de redefinição"
+            : "Entre na área do cliente"}
         </p>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
@@ -134,24 +138,61 @@ const Auth = () => {
             <Input id="email" type="email" value={form.email}
               onChange={e => setForm({ ...form, email: e.target.value })} required />
           </div>
-          <div>
-            <Label htmlFor="password">Senha</Label>
-            <Input id="password" type="password" value={form.password}
-              onChange={e => setForm({ ...form, password: e.target.value })} required minLength={6} />
-          </div>
+          {mode !== "forgot" && (
+            <div>
+              <Label htmlFor="password">Senha</Label>
+              <Input id="password" type="password" value={form.password}
+                onChange={e => setForm({ ...form, password: e.target.value })} required minLength={6} />
+            </div>
+          )}
+
+          {mode === "signin" && (
+            <div className="text-right">
+              <button type="button" onClick={() => setMode("forgot")}
+                className="text-sm font-medium text-accent hover:underline">
+                Esqueci minha senha
+              </button>
+            </div>
+          )}
 
           <Button type="submit" disabled={loading}
             className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
-            {loading ? "Aguarde..." : mode === "signup" ? "Criar conta" : "Entrar"}
+            {loading
+              ? "Aguarde..."
+              : mode === "signup"
+              ? "Criar conta"
+              : mode === "forgot"
+              ? "Enviar link de redefinição"
+              : "Entrar"}
           </Button>
         </form>
 
         <p className="mt-6 text-center text-sm text-muted-foreground">
-          {mode === "signup" ? "Já tem conta?" : "Não tem conta?"}{" "}
-          <button onClick={() => setMode(mode === "signup" ? "signin" : "signup")}
-            className="font-semibold text-accent hover:underline">
-            {mode === "signup" ? "Entrar" : "Cadastre-se"}
-          </button>
+          {mode === "forgot" ? (
+            <>
+              Lembrou a senha?{" "}
+              <button onClick={() => setMode("signin")}
+                className="font-semibold text-accent hover:underline">
+                Voltar ao login
+              </button>
+            </>
+          ) : mode === "signup" ? (
+            <>
+              Já tem conta?{" "}
+              <button onClick={() => setMode("signin")}
+                className="font-semibold text-accent hover:underline">
+                Entrar
+              </button>
+            </>
+          ) : (
+            <>
+              Não tem conta?{" "}
+              <button onClick={() => setMode("signup")}
+                className="font-semibold text-accent hover:underline">
+                Cadastre-se
+              </button>
+            </>
+          )}
         </p>
       </Card>
     </div>
