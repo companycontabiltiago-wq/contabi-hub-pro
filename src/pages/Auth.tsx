@@ -20,9 +20,14 @@ const signinSchema = z.object({
   password: z.string().min(6, "Mínimo 6 caracteres").max(72),
 });
 
+type Mode = "signin" | "signup" | "forgot";
+
 const Auth = () => {
   const [params] = useSearchParams();
-  const [mode, setMode] = useState<"signin" | "signup">(params.get("mode") === "signup" ? "signup" : "signin");
+  const initial = params.get("mode");
+  const [mode, setMode] = useState<Mode>(
+    initial === "signup" ? "signup" : initial === "forgot" ? "forgot" : "signin"
+  );
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ full_name: "", company_name: "", email: "", password: "" });
   const navigate = useNavigate();
