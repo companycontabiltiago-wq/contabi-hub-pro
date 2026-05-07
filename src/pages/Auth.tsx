@@ -42,7 +42,22 @@ const Auth = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      if (mode === "signup") {
+      if (mode === "forgot") {
+        const emailParsed = z.string().trim().email("E-mail inválido").max(255).safeParse(form.email);
+        if (!emailParsed.success) {
+          toast.error(emailParsed.error.issues[0].message);
+          return;
+        }
+        const { error } = await supabase.auth.resetPasswordForEmail(emailParsed.data, {
+          redirectTo: `${window.location.origin}/reset-password`,
+        });
+        if (error) {
+          toast.error(error.message);
+          return;
+        }
+        toast.success("Enviamos um link de redefinição para o seu e-mail.");
+        setMode("signin");
+      } else if (mode === "signup") {
         const parsed = signupSchema.safeParse(form);
         if (!parsed.success) {
           toast.error(parsed.error.issues[0].message);
