@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { LogOut, ExternalLink, FileText, Receipt, Users, Calendar, Settings, ShieldCheck } from "lucide-react";
 import logo from "@/assets/logo-company.jpeg";
+import ClientDocuments from "@/components/ClientDocuments";
 
 type Resource = { id: string; title: string; description: string | null; url: string; icon: string | null };
 type Profile = { full_name: string | null; company_name: string | null };
