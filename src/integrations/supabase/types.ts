@@ -237,6 +237,8 @@ export type Database = {
         | "contabil"
         | "societario"
         | "outros"
+        | "financeiro"
+        | "extras"
       news_category: "tributaria" | "trabalhista" | "previdenciaria"
       tax_regime:
         | "mei"
@@ -379,6 +381,8 @@ export const Constants = {
         "contabil",
         "societario",
         "outros",
+        "financeiro",
+        "extras",
       ],
       news_category: ["tributaria", "trabalhista", "previdenciaria"],
       tax_regime: [
