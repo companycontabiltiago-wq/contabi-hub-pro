@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { ArrowLeft, Trash2, Plus } from "lucide-react";
+import AdminClientsPanel from "@/components/AdminClientsPanel";
 
 type News = {
   id: string;
@@ -99,7 +100,10 @@ const Admin = () => {
         </div>
       </header>
 
-      <main className="container grid gap-8 py-12 lg:grid-cols-2">
+      <main className="container space-y-10 py-12">
+        <AdminClientsPanel />
+
+      <div className="grid gap-8 lg:grid-cols-2">
         <Card className="p-6">
           <h2 className="mb-4 flex items-center gap-2 font-display text-xl font-bold text-primary">
             <Plus className="h-5 w-5 text-accent" /> Nova novidade
@@ -154,6 +158,7 @@ const Admin = () => {
             {news.length === 0 && <p className="text-sm text-muted-foreground">Nenhuma novidade ainda.</p>}
           </div>
         </div>
+      </div>
       </main>
     </div>
   );
