@@ -95,7 +95,7 @@ const Auth = () => {
           toast.error(parsed.error.issues[0].message);
           return;
         }
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data: signInData, error } = await supabase.auth.signInWithPassword({
           email: parsed.data.email,
           password: parsed.data.password,
         });
@@ -103,13 +103,56 @@ const Auth = () => {
           toast.error("E-mail ou senha incorretos.");
           return;
         }
-        toast.success("Bem-vindo!");
-        navigate("/area-cliente", { replace: true });
+        if (profile === "admin") {
+          const { data: isAdmin } = await supabase.rpc("has_role", {
+            _user_id: signInData.user.id,
+            _role: "admin",
+          });
+          if (!isAdmin) {
+            await supabase.auth.signOut();
+            toast.error("Este usuário não tem acesso à Gestão Contábil.");
+            return;
+          }
+          toast.success("Bem-vindo!");
+          navigate("/admin", { replace: true });
+        } else {
+          toast.success("Bem-vindo!");
+          navigate("/area-cliente", { replace: true });
+        }
       }
     } finally {
       setLoading(false);
     }
   };
+
+  if (!profile) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gradient-hero p-4">
+        <Card className="w-full max-w-2xl p-8 shadow-elegant">
+          <Link to="/" className="mb-6 flex items-center justify-center" aria-label="Company Contábil">
+            <img src={logo} alt="Company Contábil" className="h-24 w-auto object-contain" />
+          </Link>
+          <p className="text-center text-sm font-medium text-muted-foreground">Escolha o ambiente:</p>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            <button
+              onClick={() => { setProfile("admin"); setMode("signin"); }}
+              className="group flex items-center justify-center gap-3 rounded-lg bg-emerald-500 px-6 py-6 text-lg font-bold uppercase tracking-wide text-white shadow-md transition hover:bg-emerald-600 hover:-translate-y-0.5"
+            >
+              <Briefcase className="h-6 w-6" />
+              Gestão Contábil
+            </button>
+            <button
+              onClick={() => { setProfile("client"); setMode("signin"); }}
+              className="group flex items-center justify-center gap-3 rounded-lg bg-orange-400 px-6 py-6 text-lg font-bold uppercase tracking-wide text-white shadow-md transition hover:bg-orange-500 hover:-translate-y-0.5"
+            >
+              <Building2 className="h-6 w-6" />
+              Cliente
+            </button>
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-hero p-4">
