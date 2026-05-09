@@ -253,7 +253,7 @@ const Auth = () => {
                 Entrar
               </button>
             </>
-          ) : (
+          ) : profile === "client" ? (
             <>
               Não tem conta?{" "}
               <button onClick={() => setMode("signup")}
@@ -261,7 +261,7 @@ const Auth = () => {
                 Cadastre-se
               </button>
             </>
-          )}
+          ) : null}
         </p>
       </Card>
     </div>
