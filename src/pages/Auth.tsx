@@ -161,6 +161,13 @@ const Auth = () => {
           <img src={logo} alt="Company Contábil — Consultoria e Gestão de Negócios" className="h-32 w-auto object-contain" />
         </Link>
 
+        <div className="mb-4 flex items-center justify-center">
+          <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide text-white ${profile === "admin" ? "bg-emerald-500" : "bg-orange-400"}`}>
+            {profile === "admin" ? <Briefcase className="h-3 w-3" /> : <Building2 className="h-3 w-3" />}
+            {profile === "admin" ? "Gestão Contábil" : "Cliente"}
+          </span>
+        </div>
+
         <h1 className="text-center font-display text-2xl font-bold text-primary">
           {mode === "signup" ? "Crie sua conta" : mode === "forgot" ? "Recuperar senha" : "Acesse sua conta"}
         </h1>
@@ -169,8 +176,16 @@ const Auth = () => {
             ? "Tenha acesso à área exclusiva de clientes"
             : mode === "forgot"
             ? "Informe seu e-mail para receber o link de redefinição"
+            : profile === "admin"
+            ? "Acesso restrito à equipe contábil"
             : "Entre na área do cliente"}
         </p>
+        <div className="mt-2 text-center">
+          <button type="button" onClick={() => setProfile(null)}
+            className="text-xs text-muted-foreground hover:text-accent hover:underline">
+            Trocar perfil
+          </button>
+        </div>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           {mode === "signup" && (
