@@ -7,7 +7,10 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { z } from "zod";
+import { Briefcase, Building2 } from "lucide-react";
 import logo from "@/assets/logo-company.jpeg";
+
+type Profile = "admin" | "client";
 
 const signupSchema = z.object({
   full_name: z.string().trim().min(2, "Informe seu nome").max(100),
