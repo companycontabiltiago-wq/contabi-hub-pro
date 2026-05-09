@@ -31,13 +31,21 @@ const Auth = () => {
   const [mode, setMode] = useState<Mode>(
     initial === "signup" ? "signup" : initial === "forgot" ? "forgot" : "signin"
   );
+  const [profile, setProfile] = useState<Profile | null>(
+    (params.get("profile") as Profile) || null
+  );
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ full_name: "", company_name: "", email: "", password: "" });
   const navigate = useNavigate();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) navigate("/area-cliente", { replace: true });
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!session) return;
+      const { data: isAdmin } = await supabase.rpc("has_role", {
+        _user_id: session.user.id,
+        _role: "admin",
+      });
+      navigate(isAdmin ? "/admin" : "/area-cliente", { replace: true });
     });
   }, [navigate]);
 
