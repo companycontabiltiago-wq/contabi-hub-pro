@@ -7,7 +7,10 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { z } from "zod";
+import { Briefcase, Building2 } from "lucide-react";
 import logo from "@/assets/logo-company.jpeg";
+
+type Profile = "admin" | "client";
 
 const signupSchema = z.object({
   full_name: z.string().trim().min(2, "Informe seu nome").max(100),
@@ -28,13 +31,21 @@ const Auth = () => {
   const [mode, setMode] = useState<Mode>(
     initial === "signup" ? "signup" : initial === "forgot" ? "forgot" : "signin"
   );
+  const [profile, setProfile] = useState<Profile | null>(
+    (params.get("profile") as Profile) || null
+  );
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ full_name: "", company_name: "", email: "", password: "" });
   const navigate = useNavigate();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) navigate("/area-cliente", { replace: true });
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!session) return;
+      const { data: isAdmin } = await supabase.rpc("has_role", {
+        _user_id: session.user.id,
+        _role: "admin",
+      });
+      navigate(isAdmin ? "/admin" : "/area-cliente", { replace: true });
     });
   }, [navigate]);
 
@@ -84,7 +95,7 @@ const Auth = () => {
           toast.error(parsed.error.issues[0].message);
           return;
         }
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data: signInData, error } = await supabase.auth.signInWithPassword({
           email: parsed.data.email,
           password: parsed.data.password,
         });
@@ -92,13 +103,56 @@ const Auth = () => {
           toast.error("E-mail ou senha incorretos.");
           return;
         }
-        toast.success("Bem-vindo!");
-        navigate("/area-cliente", { replace: true });
+        if (profile === "admin") {
+          const { data: isAdmin } = await supabase.rpc("has_role", {
+            _user_id: signInData.user.id,
+            _role: "admin",
+          });
+          if (!isAdmin) {
+            await supabase.auth.signOut();
+            toast.error("Este usuário não tem acesso à Gestão Contábil.");
+            return;
+          }
+          toast.success("Bem-vindo!");
+          navigate("/admin", { replace: true });
+        } else {
+          toast.success("Bem-vindo!");
+          navigate("/area-cliente", { replace: true });
+        }
       }
     } finally {
       setLoading(false);
     }
   };
+
+  if (!profile) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gradient-hero p-4">
+        <Card className="w-full max-w-2xl p-8 shadow-elegant">
+          <Link to="/" className="mb-6 flex items-center justify-center" aria-label="Company Contábil">
+            <img src={logo} alt="Company Contábil" className="h-24 w-auto object-contain" />
+          </Link>
+          <p className="text-center text-sm font-medium text-muted-foreground">Escolha o ambiente:</p>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            <button
+              onClick={() => { setProfile("admin"); setMode("signin"); }}
+              className="group flex items-center justify-center gap-3 rounded-lg bg-emerald-500 px-6 py-6 text-lg font-bold uppercase tracking-wide text-white shadow-md transition hover:bg-emerald-600 hover:-translate-y-0.5"
+            >
+              <Briefcase className="h-6 w-6" />
+              Gestão Contábil
+            </button>
+            <button
+              onClick={() => { setProfile("client"); setMode("signin"); }}
+              className="group flex items-center justify-center gap-3 rounded-lg bg-orange-400 px-6 py-6 text-lg font-bold uppercase tracking-wide text-white shadow-md transition hover:bg-orange-500 hover:-translate-y-0.5"
+            >
+              <Building2 className="h-6 w-6" />
+              Cliente
+            </button>
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-hero p-4">
@@ -106,6 +160,13 @@ const Auth = () => {
         <Link to="/" className="mb-6 flex items-center justify-center" aria-label="Company Contábil">
           <img src={logo} alt="Company Contábil — Consultoria e Gestão de Negócios" className="h-32 w-auto object-contain" />
         </Link>
+
+        <div className="mb-4 flex items-center justify-center">
+          <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide text-white ${profile === "admin" ? "bg-emerald-500" : "bg-orange-400"}`}>
+            {profile === "admin" ? <Briefcase className="h-3 w-3" /> : <Building2 className="h-3 w-3" />}
+            {profile === "admin" ? "Gestão Contábil" : "Cliente"}
+          </span>
+        </div>
 
         <h1 className="text-center font-display text-2xl font-bold text-primary">
           {mode === "signup" ? "Crie sua conta" : mode === "forgot" ? "Recuperar senha" : "Acesse sua conta"}
@@ -115,8 +176,16 @@ const Auth = () => {
             ? "Tenha acesso à área exclusiva de clientes"
             : mode === "forgot"
             ? "Informe seu e-mail para receber o link de redefinição"
+            : profile === "admin"
+            ? "Acesso restrito à equipe contábil"
             : "Entre na área do cliente"}
         </p>
+        <div className="mt-2 text-center">
+          <button type="button" onClick={() => setProfile(null)}
+            className="text-xs text-muted-foreground hover:text-accent hover:underline">
+            Trocar perfil
+          </button>
+        </div>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           {mode === "signup" && (
@@ -184,7 +253,7 @@ const Auth = () => {
                 Entrar
               </button>
             </>
-          ) : (
+          ) : profile === "client" ? (
             <>
               Não tem conta?{" "}
               <button onClick={() => setMode("signup")}
@@ -192,7 +261,7 @@ const Auth = () => {
                 Cadastre-se
               </button>
             </>
-          )}
+          ) : null}
         </p>
       </Card>
     </div>
