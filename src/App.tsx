@@ -14,6 +14,7 @@ import EmpresaInativa from "./pages/artigos/EmpresaInativa.tsx";
 import IrpfMedicos from "./pages/artigos/IrpfMedicos.tsx";
 import Mei from "./pages/Mei.tsx";
 import ResetPassword from "./pages/ResetPassword.tsx";
+import Plataforma from "./pages/Plataforma.tsx";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/plataforma" element={<Plataforma />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/area-cliente" element={<ClientArea />} />
           <Route path="/admin" element={<Admin />} />

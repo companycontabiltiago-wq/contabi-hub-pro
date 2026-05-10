@@ -55,8 +55,8 @@ export const SiteHeader = () => {
             <Button variant="default" onClick={() => navigate("/area-cliente")}>Área do Cliente</Button>
           ) : (
             <>
-              <Button variant="ghost" onClick={() => navigate("/auth")}>Entrar</Button>
-              <Button onClick={() => navigate("/auth?mode=signup")} className="bg-accent text-accent-foreground hover:bg-accent/90">
+              <Button variant="ghost" onClick={() => navigate("/plataforma")}>Plataforma</Button>
+              <Button onClick={() => navigate("/auth?profile=client&mode=signup")} className="bg-accent text-accent-foreground hover:bg-accent/90">
                 Cadastre-se
               </Button>
             </>
@@ -80,8 +80,8 @@ export const SiteHeader = () => {
               <Button onClick={() => navigate("/area-cliente")}>Área do Cliente</Button>
             ) : (
               <div className="flex gap-2">
-                <Button variant="outline" onClick={() => navigate("/auth")} className="flex-1">Entrar</Button>
-                <Button onClick={() => navigate("/auth?mode=signup")} className="flex-1 bg-accent text-accent-foreground">Cadastrar</Button>
+                <Button variant="outline" onClick={() => navigate("/plataforma")} className="flex-1">Plataforma</Button>
+                <Button onClick={() => navigate("/auth?profile=client&mode=signup")} className="flex-1 bg-accent text-accent-foreground">Cadastrar</Button>
               </div>
             )}
           </div>

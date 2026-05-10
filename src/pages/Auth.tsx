@@ -40,14 +40,17 @@ const Auth = () => {
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (!session) return;
+      if (!session) {
+        if (!profile) navigate("/plataforma", { replace: true });
+        return;
+      }
       const { data: isAdmin } = await supabase.rpc("has_role", {
         _user_id: session.user.id,
         _role: "admin",
       });
       navigate(isAdmin ? "/admin" : "/area-cliente", { replace: true });
     });
-  }, [navigate]);
+  }, [navigate, profile]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -181,7 +184,7 @@ const Auth = () => {
             : "Entre na área do cliente"}
         </p>
         <div className="mt-2 text-center">
-          <button type="button" onClick={() => setProfile(null)}
+          <button type="button" onClick={() => navigate("/plataforma")}
             className="text-xs text-muted-foreground hover:text-accent hover:underline">
             Trocar perfil
           </button>
