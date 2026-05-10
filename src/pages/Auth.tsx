@@ -184,7 +184,7 @@ const Auth = () => {
             : "Entre na área do cliente"}
         </p>
         <div className="mt-2 text-center">
-          <button type="button" onClick={() => setProfile(null)}
+          <button type="button" onClick={() => navigate("/plataforma")}
             className="text-xs text-muted-foreground hover:text-accent hover:underline">
             Trocar perfil
           </button>
