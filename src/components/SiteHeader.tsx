@@ -55,8 +55,8 @@ export const SiteHeader = () => {
             <Button variant="default" onClick={() => navigate("/area-cliente")}>Área do Cliente</Button>
           ) : (
             <>
-              <Button variant="ghost" onClick={() => navigate("/auth")}>Entrar</Button>
-              <Button onClick={() => navigate("/auth?mode=signup")} className="bg-accent text-accent-foreground hover:bg-accent/90">
+              <Button variant="ghost" onClick={() => navigate("/plataforma")}>Plataforma</Button>
+              <Button onClick={() => navigate("/auth?profile=client&mode=signup")} className="bg-accent text-accent-foreground hover:bg-accent/90">
                 Cadastre-se
               </Button>
             </>
