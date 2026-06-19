@@ -338,25 +338,50 @@ const calcIRRF = (base: number) => {
 };
 
 // ---------- Calculadoras ----------
+type Regime = "simples_iii" | "simples_iv" | "presumido_real";
+
+const REGIME_LABELS: Record<Regime, string> = {
+  simples_iii: "Simples Nacional — Anexos I, II, III ou V",
+  simples_iv: "Simples Nacional — Anexo IV",
+  presumido_real: "Lucro Presumido ou Lucro Real",
+};
+
 const CustoFuncionarioCalc = () => {
   const [salario, setSalario] = useState<string>("");
+  const [regime, setRegime] = useState<Regime>("presumido_real");
+  const [ratPct, setRatPct] = useState<string>("3");
   const valor = parseFloat(salario.replace(",", ".")) || 0;
+  const ratAliq = (parseFloat(ratPct) || 0) / 100;
 
   const result = useMemo(() => {
-    const inssPatronal = valor * 0.2;
+    // Encargos patronais conforme regime tributário:
+    // - Simples Anexos I/II/III/V: CPP já incluída no DAS → sem 20% patronal, sem RAT, sem Terceiros
+    // - Simples Anexo IV: 20% patronal + RAT (conforme atividade), sem Terceiros
+    // - Lucro Presumido/Real: 20% patronal + RAT + Terceiros (~5,8%)
+    let inssPatronal = 0;
+    let ratValor = 0;
+    let terceiros = 0;
+
+    if (regime === "simples_iv") {
+      inssPatronal = valor * 0.2;
+      ratValor = valor * ratAliq;
+    } else if (regime === "presumido_real") {
+      inssPatronal = valor * 0.2;
+      ratValor = valor * ratAliq;
+      terceiros = valor * 0.058;
+    }
+
     const fgts = valor * 0.08;
-    const ratTerceiros = valor * 0.058; // RAT 1-3% + Terceiros ~5,8%
     const ferias = (valor + valor / 3) / 12;
     const decimoTerceiro = valor / 12;
     const fgtsProvisoes = (ferias + decimoTerceiro) * 0.08;
-    // Provisão da multa rescisória de 40% sobre todo FGTS depositado no mês
-    // (inclui FGTS do salário e FGTS sobre férias e 13º)
     const multaFgts40 = (fgts + fgtsProvisoes) * 0.4;
     const total =
       valor +
       inssPatronal +
+      ratValor +
+      terceiros +
       fgts +
-      ratTerceiros +
       ferias +
       decimoTerceiro +
       fgtsProvisoes +
@@ -364,8 +389,9 @@ const CustoFuncionarioCalc = () => {
     const pct = valor > 0 ? ((total / valor - 1) * 100).toFixed(1) : "0";
     return {
       inssPatronal,
+      ratValor,
+      terceiros,
       fgts,
-      ratTerceiros,
       ferias,
       decimoTerceiro,
       fgtsProvisoes,
@@ -373,10 +399,34 @@ const CustoFuncionarioCalc = () => {
       total,
       pct,
     };
-  }, [valor]);
+  }, [valor, regime, ratAliq]);
+
+  const showPatronal = regime !== "simples_iii";
+  const showTerceiros = regime === "presumido_real";
 
   return (
     <div className="space-y-4">
+      <div>
+        <Label htmlFor="regime-cf">Regime tributário da empresa</Label>
+        <select
+          id="regime-cf"
+          className="mt-1 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+          value={regime}
+          onChange={(e) => setRegime(e.target.value as Regime)}
+        >
+          {(Object.keys(REGIME_LABELS) as Regime[]).map((r) => (
+            <option key={r} value={r}>
+              {REGIME_LABELS[r]}
+            </option>
+          ))}
+        </select>
+        {regime === "simples_iii" && (
+          <p className="mt-1 text-xs text-muted-foreground">
+            Nos Anexos I, II, III e V do Simples, a Contribuição Previdenciária Patronal (CPP) já está incluída no DAS — não há 20% patronal nem RAT/Terceiros separados.
+          </p>
+        )}
+      </div>
+
       <div>
         <Label htmlFor="salario-cf">Salário bruto mensal (R$)</Label>
         <Input
@@ -390,12 +440,36 @@ const CustoFuncionarioCalc = () => {
         />
       </div>
 
+      {showPatronal && (
+        <div>
+          <Label htmlFor="rat-cf">RAT/SAT conforme atividade (%)</Label>
+          <select
+            id="rat-cf"
+            className="mt-1 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+            value={ratPct}
+            onChange={(e) => setRatPct(e.target.value)}
+          >
+            <option value="1">1% — risco leve</option>
+            <option value="2">2% — risco médio</option>
+            <option value="3">3% — risco grave</option>
+          </select>
+        </div>
+      )}
+
       {valor > 0 && (
         <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-2 text-sm">
+          <Row label="Regime" value={REGIME_LABELS[regime]} />
           <Row label="Salário bruto" value={fmtBRL(valor)} />
-          <Row label="INSS patronal (20%)" value={fmtBRL(result.inssPatronal)} />
+          {showPatronal && (
+            <>
+              <Row label="INSS patronal (20%)" value={fmtBRL(result.inssPatronal)} />
+              <Row label={`RAT (${ratPct}%)`} value={fmtBRL(result.ratValor)} />
+            </>
+          )}
+          {showTerceiros && (
+            <Row label="Terceiros (5,8%)" value={fmtBRL(result.terceiros)} />
+          )}
           <Row label="FGTS (8%)" value={fmtBRL(result.fgts)} />
-          <Row label="RAT + Terceiros (~5,8%)" value={fmtBRL(result.ratTerceiros)} />
           <Row label="Provisão de férias + 1/3" value={fmtBRL(result.ferias)} />
           <Row label="Provisão de 13º salário" value={fmtBRL(result.decimoTerceiro)} />
           <Row label="FGTS sobre provisões" value={fmtBRL(result.fgtsProvisoes)} />
@@ -423,15 +497,24 @@ const CustoFuncionarioCalc = () => {
                   {
                     title: "Dados informados",
                     rows: [
+                      { label: "Regime tributário", value: REGIME_LABELS[regime] },
                       { label: "Salário bruto mensal", value: fmtBRL(valor) },
+                      ...(showPatronal ? [{ label: "RAT/SAT", value: `${ratPct}%` }] : []),
                     ],
                   },
                   {
                     title: "Encargos e provisões",
                     rows: [
-                      { label: "INSS patronal (20%)", value: fmtBRL(result.inssPatronal) },
+                      ...(showPatronal
+                        ? [
+                            { label: "INSS patronal (20%)", value: fmtBRL(result.inssPatronal) },
+                            { label: `RAT (${ratPct}%)`, value: fmtBRL(result.ratValor) },
+                          ]
+                        : []),
+                      ...(showTerceiros
+                        ? [{ label: "Terceiros (5,8%)", value: fmtBRL(result.terceiros) }]
+                        : []),
                       { label: "FGTS (8%)", value: fmtBRL(result.fgts) },
-                      { label: "RAT + Terceiros (~5,8%)", value: fmtBRL(result.ratTerceiros) },
                       { label: "Provisão de férias + 1/3", value: fmtBRL(result.ferias) },
                       { label: "Provisão de 13º salário", value: fmtBRL(result.decimoTerceiro) },
                       { label: "FGTS sobre provisões", value: fmtBRL(result.fgtsProvisoes) },
@@ -440,6 +523,7 @@ const CustoFuncionarioCalc = () => {
                       { label: "Custo total mensal", value: fmtBRL(result.total), highlight: true },
                       { label: "Custo total anual (×12)", value: fmtBRL(result.total * 12) },
                       { note: `Equivale a aproximadamente ${result.pct}% acima do salário bruto.` },
+                      { note: regime === "simples_iii" ? "Empresas do Simples Nacional nos Anexos I, II, III e V recolhem a CPP dentro do DAS — por isso não há 20% patronal nem RAT/Terceiros separados sobre a folha." : regime === "simples_iv" ? "No Anexo IV do Simples Nacional incidem o INSS patronal (20%) e o RAT sobre a folha, mas não a contribuição de Terceiros (Sistema S)." : "Empresas de Lucro Presumido ou Real recolhem INSS patronal (20%), RAT conforme atividade e Terceiros (~5,8%) sobre a folha." },
                       { note: "A multa de 40% sobre o FGTS é provisionada todos os meses, prevendo a rescisão sem justa causa, e incide sobre o total depositado de FGTS (salário + provisões de férias e 13º)." },
                     ],
                   },
