@@ -350,8 +350,12 @@ const CustoFuncionarioCalc = () => {
   const [salario, setSalario] = useState<string>("");
   const [regime, setRegime] = useState<Regime>("presumido_real");
   const [ratPct, setRatPct] = useState<string>("3");
+  const [valeTransporte, setValeTransporte] = useState<string>("");
+  const [valeRefeicao, setValeRefeicao] = useState<string>("");
   const valor = parseFloat(salario.replace(",", ".")) || 0;
   const ratAliq = (parseFloat(ratPct) || 0) / 100;
+  const vt = parseFloat(valeTransporte.replace(",", ".")) || 0;
+  const vr = parseFloat(valeRefeicao.replace(",", ".")) || 0;
 
   const result = useMemo(() => {
     // Encargos patronais conforme regime tributário:
@@ -376,6 +380,7 @@ const CustoFuncionarioCalc = () => {
     const decimoTerceiro = valor / 12;
     const fgtsProvisoes = (ferias + decimoTerceiro) * 0.08;
     const multaFgts40 = (fgts + fgtsProvisoes) * 0.4;
+    const beneficios = vt + vr;
     const total =
       valor +
       inssPatronal +
@@ -385,7 +390,8 @@ const CustoFuncionarioCalc = () => {
       ferias +
       decimoTerceiro +
       fgtsProvisoes +
-      multaFgts40;
+      multaFgts40 +
+      beneficios;
     const pct = valor > 0 ? ((total / valor - 1) * 100).toFixed(1) : "0";
     return {
       inssPatronal,
@@ -396,10 +402,13 @@ const CustoFuncionarioCalc = () => {
       decimoTerceiro,
       fgtsProvisoes,
       multaFgts40,
+      vt,
+      vr,
+      beneficios,
       total,
       pct,
     };
-  }, [valor, regime, ratAliq]);
+  }, [valor, regime, ratAliq, vt, vr]);
 
   const showPatronal = regime !== "simples_iii";
   const showTerceiros = regime === "presumido_real";
@@ -456,6 +465,36 @@ const CustoFuncionarioCalc = () => {
         </div>
       )}
 
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div>
+          <Label htmlFor="vt-cf">Vale-transporte mensal (R$)</Label>
+          <Input
+            id="vt-cf"
+            type="number"
+            inputMode="decimal"
+            placeholder="Ex: 220"
+            value={valeTransporte}
+            onChange={(e) => setValeTransporte(e.target.value)}
+            maxLength={10}
+          />
+        </div>
+        <div>
+          <Label htmlFor="vr-cf">Vale-refeição/alimentação mensal (R$)</Label>
+          <Input
+            id="vr-cf"
+            type="number"
+            inputMode="decimal"
+            placeholder="Ex: 600"
+            value={valeRefeicao}
+            onChange={(e) => setValeRefeicao(e.target.value)}
+            maxLength={10}
+          />
+        </div>
+      </div>
+      <p className="text-xs text-muted-foreground">
+        Os valores de vale-transporte e vale-refeição informados são somados integralmente ao custo mensal (não há incidência de encargos sobre eles).
+      </p>
+
       {valor > 0 && (
         <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-2 text-sm">
           <Row label="Regime" value={REGIME_LABELS[regime]} />
@@ -474,6 +513,8 @@ const CustoFuncionarioCalc = () => {
           <Row label="Provisão de 13º salário" value={fmtBRL(result.decimoTerceiro)} />
           <Row label="FGTS sobre provisões" value={fmtBRL(result.fgtsProvisoes)} />
           <Row label="Provisão multa rescisória FGTS (40%)" value={fmtBRL(result.multaFgts40)} />
+          {vt > 0 && <Row label="Vale-transporte" value={fmtBRL(vt)} />}
+          {vr > 0 && <Row label="Vale-refeição/alimentação" value={fmtBRL(vr)} />}
           <div className="my-2 h-px bg-border" />
           <Row
             label="Custo total mensal"
@@ -519,6 +560,8 @@ const CustoFuncionarioCalc = () => {
                       { label: "Provisão de 13º salário", value: fmtBRL(result.decimoTerceiro) },
                       { label: "FGTS sobre provisões", value: fmtBRL(result.fgtsProvisoes) },
                       { label: "Provisão multa rescisória FGTS (40%)", value: fmtBRL(result.multaFgts40) },
+                      ...(vt > 0 ? [{ label: "Vale-transporte", value: fmtBRL(vt) }] : []),
+                      ...(vr > 0 ? [{ label: "Vale-refeição/alimentação", value: fmtBRL(vr) }] : []),
                       { divider: true },
                       { label: "Custo total mensal", value: fmtBRL(result.total), highlight: true },
                       { label: "Custo total anual (×12)", value: fmtBRL(result.total * 12) },
