@@ -513,6 +513,8 @@ const CustoFuncionarioCalc = () => {
           <Row label="Provisão de 13º salário" value={fmtBRL(result.decimoTerceiro)} />
           <Row label="FGTS sobre provisões" value={fmtBRL(result.fgtsProvisoes)} />
           <Row label="Provisão multa rescisória FGTS (40%)" value={fmtBRL(result.multaFgts40)} />
+          {vt > 0 && <Row label="Vale-transporte" value={fmtBRL(vt)} />}
+          {vr > 0 && <Row label="Vale-refeição/alimentação" value={fmtBRL(vr)} />}
           <div className="my-2 h-px bg-border" />
           <Row
             label="Custo total mensal"
