@@ -350,8 +350,12 @@ const CustoFuncionarioCalc = () => {
   const [salario, setSalario] = useState<string>("");
   const [regime, setRegime] = useState<Regime>("presumido_real");
   const [ratPct, setRatPct] = useState<string>("3");
+  const [valeTransporte, setValeTransporte] = useState<string>("");
+  const [valeRefeicao, setValeRefeicao] = useState<string>("");
   const valor = parseFloat(salario.replace(",", ".")) || 0;
   const ratAliq = (parseFloat(ratPct) || 0) / 100;
+  const vt = parseFloat(valeTransporte.replace(",", ".")) || 0;
+  const vr = parseFloat(valeRefeicao.replace(",", ".")) || 0;
 
   const result = useMemo(() => {
     // Encargos patronais conforme regime tributário:
@@ -376,6 +380,7 @@ const CustoFuncionarioCalc = () => {
     const decimoTerceiro = valor / 12;
     const fgtsProvisoes = (ferias + decimoTerceiro) * 0.08;
     const multaFgts40 = (fgts + fgtsProvisoes) * 0.4;
+    const beneficios = vt + vr;
     const total =
       valor +
       inssPatronal +
@@ -385,7 +390,8 @@ const CustoFuncionarioCalc = () => {
       ferias +
       decimoTerceiro +
       fgtsProvisoes +
-      multaFgts40;
+      multaFgts40 +
+      beneficios;
     const pct = valor > 0 ? ((total / valor - 1) * 100).toFixed(1) : "0";
     return {
       inssPatronal,
@@ -396,10 +402,13 @@ const CustoFuncionarioCalc = () => {
       decimoTerceiro,
       fgtsProvisoes,
       multaFgts40,
+      vt,
+      vr,
+      beneficios,
       total,
       pct,
     };
-  }, [valor, regime, ratAliq]);
+  }, [valor, regime, ratAliq, vt, vr]);
 
   const showPatronal = regime !== "simples_iii";
   const showTerceiros = regime === "presumido_real";
