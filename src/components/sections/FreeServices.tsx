@@ -560,6 +560,8 @@ const CustoFuncionarioCalc = () => {
                       { label: "Provisão de 13º salário", value: fmtBRL(result.decimoTerceiro) },
                       { label: "FGTS sobre provisões", value: fmtBRL(result.fgtsProvisoes) },
                       { label: "Provisão multa rescisória FGTS (40%)", value: fmtBRL(result.multaFgts40) },
+                      ...(vt > 0 ? [{ label: "Vale-transporte", value: fmtBRL(vt) }] : []),
+                      ...(vr > 0 ? [{ label: "Vale-refeição/alimentação", value: fmtBRL(vr) }] : []),
                       { divider: true },
                       { label: "Custo total mensal", value: fmtBRL(result.total), highlight: true },
                       { label: "Custo total anual (×12)", value: fmtBRL(result.total * 12) },
