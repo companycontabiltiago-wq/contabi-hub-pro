@@ -465,6 +465,36 @@ const CustoFuncionarioCalc = () => {
         </div>
       )}
 
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div>
+          <Label htmlFor="vt-cf">Vale-transporte mensal (R$)</Label>
+          <Input
+            id="vt-cf"
+            type="number"
+            inputMode="decimal"
+            placeholder="Ex: 220"
+            value={valeTransporte}
+            onChange={(e) => setValeTransporte(e.target.value)}
+            maxLength={10}
+          />
+        </div>
+        <div>
+          <Label htmlFor="vr-cf">Vale-refeição/alimentação mensal (R$)</Label>
+          <Input
+            id="vr-cf"
+            type="number"
+            inputMode="decimal"
+            placeholder="Ex: 600"
+            value={valeRefeicao}
+            onChange={(e) => setValeRefeicao(e.target.value)}
+            maxLength={10}
+          />
+        </div>
+      </div>
+      <p className="text-xs text-muted-foreground">
+        Os valores de vale-transporte e vale-refeição informados são somados integralmente ao custo mensal (não há incidência de encargos sobre eles).
+      </p>
+
       {valor > 0 && (
         <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-2 text-sm">
           <Row label="Regime" value={REGIME_LABELS[regime]} />
