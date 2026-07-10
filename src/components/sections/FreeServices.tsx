@@ -225,6 +225,30 @@ const concepts: Record<ToolKey, { title: string; body: React.ReactNode }> = {
       </>
     ),
   },
+  "vt-recibo": {
+    title: "Recibo de Vale-Transporte",
+    body: (
+      <>
+        <p>
+          O <strong>Vale-Transporte (VT)</strong> é benefício obrigatório
+          (Lei 7.418/1985) concedido pelo empregador para custear o
+          deslocamento residência ↔ trabalho. A empresa pode descontar do
+          empregado até <strong>6% do salário base</strong> — o restante é
+          custo do empregador.
+        </p>
+        <p>
+          Use esta ferramenta para gerar um <strong>recibo de entrega/pagamento
+          de VT</strong> ao colaborador, com cálculo automático a partir do
+          <em> valor diário × dias trabalhados</em> ou informando diretamente
+          o <em>valor mensal</em>.
+        </p>
+        <p className="text-sm text-muted-foreground">
+          ⚠️ Documento de conferência entre empresa e colaborador. Não substitui
+          a folha de pagamento nem os registros oficiais.
+        </p>
+      </>
+    ),
+  },
   agendamento: {
     title: "Agendamento de Horário de Atendimento",
     body: (
