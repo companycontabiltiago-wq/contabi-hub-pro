@@ -1589,6 +1589,8 @@ export const FreeServices = () => {
         return <InssCalc />;
       case "rpa":
         return <RpaCalc />;
+      case "vt-recibo":
+        return <VtReciboCalc />;
       case "simulador-tributario":
         return <TaxRegimeSimulator />;
       default:
