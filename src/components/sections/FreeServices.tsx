@@ -1195,6 +1195,374 @@ const RpaCalc = () => {
   );
 };
 
+const VtReciboCalc = () => {
+  const [colaborador, setColaborador] = useState("");
+  const [cpfColab, setCpfColab] = useState("");
+  const [empresa, setEmpresa] = useState("");
+  const [cnpjEmpresa, setCnpjEmpresa] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [referencia, setReferencia] = useState<string>(() => {
+    const d = new Date();
+    return `${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()}`;
+  });
+  const [data, setData] = useState<string>(() => new Date().toISOString().slice(0, 10));
+  const [tipo, setTipo] = useState<"diario" | "mensal">("diario");
+  const [valor, setValor] = useState<string>("");
+  const [dias, setDias] = useState<string>("22");
+  const [obs, setObs] = useState("");
+
+  const v = parseFloat(valor.replace(",", ".")) || 0;
+  const d = parseInt(dias) || 0;
+  const total = tipo === "diario" ? v * d : v;
+
+  const podeGerar = total > 0 && !!colaborador && !!empresa;
+
+  const gerarRecibo = () => {
+    const brand = loadBrand();
+    const hexToRgb = (hex: string): [number, number, number] => {
+      const m = hex.replace("#", "");
+      return [0, 2, 4].map((i) => parseInt(m.substring(i, i + 2), 16)) as [number, number, number];
+    };
+    const [pr, pg, pb] = hexToRgb(brand.primaryColor || "#0F2048");
+
+    const doc = new jsPDF({ unit: "mm", format: "a4" });
+    const pageW = 210;
+    const pageH = 297;
+    const margin = 18;
+    let y = margin;
+
+    const headerH = brand.logoDataUrl ? 30 : 24;
+    doc.setFillColor(pr, pg, pb);
+    doc.rect(0, 0, pageW, headerH, "F");
+
+    let titleX = pageW / 2;
+    let titleAlign: "center" | "left" = "center";
+    if (brand.logoDataUrl) {
+      try {
+        const fmt = brand.logoDataUrl.startsWith("data:image/jpeg") ? "JPEG" : "PNG";
+        doc.addImage(brand.logoDataUrl, fmt, margin, 5, 20, 20);
+        titleX = margin + 26;
+        titleAlign = "left";
+      } catch {
+        /* logo inválida */
+      }
+    }
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(13);
+    doc.text(brand.companyName.toUpperCase(), titleX, 12, { align: titleAlign });
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+    doc.text("RECIBO DE VALE-TRANSPORTE", titleX, 19, { align: titleAlign });
+
+    const contatos = [brand.phone, brand.email, brand.website].filter(Boolean) as string[];
+    if (contatos.length) {
+      doc.setFontSize(8);
+      let cy = 9;
+      contatos.forEach((c) => {
+        doc.text(c, pageW - margin, cy, { align: "right" });
+        cy += 4;
+      });
+    }
+
+    y = headerH + 8;
+    doc.setTextColor(20, 20, 20);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.text(`Nº do recibo: ${Date.now().toString().slice(-8)}`, margin, y);
+    doc.text(`Referência: ${referencia}`, pageW - margin, y, { align: "right" });
+
+    y += 10;
+    doc.setDrawColor(pr, pg, pb);
+    doc.setLineWidth(0.4);
+    doc.rect(margin, y, pageW - margin * 2, 14);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.text(`VALOR TOTAL: ${fmtBRL(total)}`, pageW / 2, y + 9, { align: "center" });
+
+    y += 22;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+    const declaracao =
+      `Eu, ${colaborador || "________________________"}` +
+      (cpfColab ? `, inscrito(a) no CPF nº ${cpfColab}` : "") +
+      `, declaro ter recebido de ${empresa || "________________________"}` +
+      (cnpjEmpresa ? `, inscrita no CNPJ nº ${cnpjEmpresa}` : "") +
+      `, a importância de ${fmtBRL(total)} (${valorPorExtenso(total)}), ` +
+      `referente ao Vale-Transporte do período ${referencia}` +
+      (tipo === "diario"
+        ? `, calculado com base em ${d} dia(s) trabalhado(s) ao valor diário de ${fmtBRL(v)}.`
+        : `, no valor mensal de ${fmtBRL(v)}.`);
+    const linhas = doc.splitTextToSize(declaracao, pageW - margin * 2);
+    doc.text(linhas, margin, y);
+    y += linhas.length * 5 + 4;
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.setTextColor(pr, pg, pb);
+    doc.text("Demonstrativo", margin, y);
+    doc.setTextColor(20, 20, 20);
+    y += 2;
+    doc.setLineWidth(0.2);
+    doc.line(margin, y, pageW - margin, y);
+    y += 6;
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+    const linha = (label: string, val: string, bold = false) => {
+      doc.setFont("helvetica", bold ? "bold" : "normal");
+      doc.text(label, margin, y);
+      doc.text(val, pageW - margin, y, { align: "right" });
+      y += 6;
+    };
+    linha("Tipo de apuração", tipo === "diario" ? "Diário × dias trabalhados" : "Valor mensal fixo");
+    if (tipo === "diario") {
+      linha("Valor diário", fmtBRL(v));
+      linha("Dias trabalhados", String(d));
+    } else {
+      linha("Valor mensal", fmtBRL(v));
+    }
+    linha("Período de referência", referencia);
+    y += 1;
+    doc.setLineWidth(0.3);
+    doc.line(margin, y, pageW - margin, y);
+    y += 6;
+    linha("TOTAL RECEBIDO", fmtBRL(total), true);
+
+    y += 6;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.setTextColor(pr, pg, pb);
+    doc.text("Identificação das partes", margin, y);
+    doc.setTextColor(20, 20, 20);
+    y += 2;
+    doc.setLineWidth(0.2);
+    doc.line(margin, y, pageW - margin, y);
+    y += 6;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+    linha("Colaborador", colaborador || "—", true);
+    if (cpfColab) linha("CPF do colaborador", cpfColab);
+    y += 2;
+    linha("Empresa pagadora", empresa || "—", true);
+    if (cnpjEmpresa) linha("CNPJ da empresa", cnpjEmpresa);
+
+    if (obs) {
+      y += 4;
+      doc.setFont("helvetica", "italic");
+      const obsLines = doc.splitTextToSize(`Observações: ${obs}`, pageW - margin * 2);
+      doc.text(obsLines, margin, y);
+      y += obsLines.length * 5;
+    }
+
+    y += 10;
+    doc.setFont("helvetica", "normal");
+    doc.text(
+      `${cidade || "________________"}, ${new Date(data).toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}.`,
+      margin,
+      y,
+    );
+    y += 24;
+    doc.line(margin + 30, y, pageW - margin - 30, y);
+    y += 5;
+    doc.text(colaborador || "Assinatura do colaborador", pageW / 2, y, { align: "center" });
+
+    const footerLine =
+      [brand.companyName, brand.address, brand.phone, brand.email, brand.website]
+        .filter(Boolean)
+        .join(" · ") || "Calculadora gratuita.";
+    doc.setDrawColor(pr, pg, pb);
+    doc.setLineWidth(0.3);
+    doc.line(margin, pageH - 16, pageW - margin, pageH - 16);
+    doc.setFontSize(8);
+    doc.setTextColor(120, 120, 120);
+    doc.text(footerLine, pageW / 2, pageH - 11, {
+      align: "center",
+      maxWidth: pageW - margin * 2,
+    });
+    doc.text(
+      "Documento de conferência — Vale-Transporte (Lei 7.418/1985).",
+      pageW / 2,
+      pageH - 7,
+      { align: "center" },
+    );
+
+    doc.save(`VT_${(colaborador || "colaborador").replace(/\s+/g, "_")}_${referencia.replace("/", "-")}.pdf`);
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div>
+          <Label htmlFor="vt-colab">Nome do colaborador</Label>
+          <Input
+            id="vt-colab"
+            placeholder="Ex: Maria Souza"
+            value={colaborador}
+            onChange={(e) => setColaborador(e.target.value)}
+            maxLength={120}
+          />
+        </div>
+        <div>
+          <Label htmlFor="vt-cpf">CPF do colaborador (opcional)</Label>
+          <Input
+            id="vt-cpf"
+            placeholder="000.000.000-00"
+            value={cpfColab}
+            onChange={(e) => setCpfColab(formatCpfCnpj(e.target.value))}
+            maxLength={18}
+          />
+        </div>
+        <div>
+          <Label htmlFor="vt-empresa">Empresa pagadora</Label>
+          <Input
+            id="vt-empresa"
+            placeholder="Ex: Empresa XYZ Ltda."
+            value={empresa}
+            onChange={(e) => setEmpresa(e.target.value)}
+            maxLength={150}
+          />
+        </div>
+        <div>
+          <Label htmlFor="vt-cnpj">CNPJ da empresa (opcional)</Label>
+          <Input
+            id="vt-cnpj"
+            placeholder="00.000.000/0000-00"
+            value={cnpjEmpresa}
+            onChange={(e) => setCnpjEmpresa(formatCpfCnpj(e.target.value))}
+            maxLength={18}
+          />
+        </div>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-3">
+        <div>
+          <Label htmlFor="vt-tipo">Tipo de valor</Label>
+          <select
+            id="vt-tipo"
+            className="mt-1 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+            value={tipo}
+            onChange={(e) => setTipo(e.target.value as "diario" | "mensal")}
+          >
+            <option value="diario">Diário × dias</option>
+            <option value="mensal">Valor mensal fixo</option>
+          </select>
+        </div>
+        <div>
+          <Label htmlFor="vt-valor">
+            {tipo === "diario" ? "Valor diário (R$)" : "Valor mensal (R$)"}
+          </Label>
+          <Input
+            id="vt-valor"
+            type="number"
+            inputMode="decimal"
+            placeholder={tipo === "diario" ? "Ex: 12,50" : "Ex: 275,00"}
+            value={valor}
+            onChange={(e) => setValor(e.target.value)}
+            maxLength={10}
+          />
+        </div>
+        <div>
+          <Label htmlFor="vt-dias">Dias trabalhados</Label>
+          <Input
+            id="vt-dias"
+            type="number"
+            inputMode="numeric"
+            placeholder="Ex: 22"
+            value={dias}
+            onChange={(e) => setDias(e.target.value)}
+            disabled={tipo === "mensal"}
+            maxLength={3}
+          />
+        </div>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-3">
+        <div>
+          <Label htmlFor="vt-ref">Referência (mês/ano)</Label>
+          <Input
+            id="vt-ref"
+            placeholder="MM/AAAA"
+            value={referencia}
+            onChange={(e) => setReferencia(e.target.value)}
+            maxLength={7}
+          />
+        </div>
+        <div>
+          <Label htmlFor="vt-cidade">Cidade</Label>
+          <Input
+            id="vt-cidade"
+            placeholder="Ex: São Paulo"
+            value={cidade}
+            onChange={(e) => setCidade(e.target.value)}
+            maxLength={80}
+          />
+        </div>
+        <div>
+          <Label htmlFor="vt-data">Data do recibo</Label>
+          <Input
+            id="vt-data"
+            type="date"
+            value={data}
+            onChange={(e) => setData(e.target.value)}
+          />
+        </div>
+      </div>
+
+      <div>
+        <Label htmlFor="vt-obs">Observações (opcional)</Label>
+        <Input
+          id="vt-obs"
+          placeholder="Ex: Referente ao trajeto casa-trabalho por transporte público"
+          value={obs}
+          onChange={(e) => setObs(e.target.value)}
+          maxLength={200}
+        />
+      </div>
+
+      {total > 0 && (
+        <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-2 text-sm">
+          <Row
+            label="Tipo de apuração"
+            value={tipo === "diario" ? "Diário × dias" : "Mensal fixo"}
+          />
+          {tipo === "diario" ? (
+            <>
+              <Row label="Valor diário" value={fmtBRL(v)} />
+              <Row label="Dias trabalhados" value={String(d)} />
+            </>
+          ) : (
+            <Row label="Valor mensal" value={fmtBRL(v)} />
+          )}
+          <div className="my-2 h-px bg-border" />
+          <Row label="Total do VT" value={fmtBRL(total)} highlight />
+        </div>
+      )}
+
+      <Button
+        onClick={gerarRecibo}
+        disabled={!podeGerar}
+        className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+      >
+        <FileText className="mr-2 h-4 w-4" />
+        Gerar recibo em PDF
+      </Button>
+      {!podeGerar && (
+        <p className="text-xs text-muted-foreground">
+          Informe o colaborador, a empresa e um valor total maior que zero para
+          liberar a geração do recibo.
+        </p>
+      )}
+
+      <p className="text-xs text-muted-foreground">
+        ⚠️ A empresa pode descontar até <strong>6% do salário base</strong> do
+        empregado a título de VT (Lei 7.418/1985). Este recibo comprova a
+        entrega/pagamento e não substitui a folha de pagamento.
+      </p>
+    </div>
+  );
+};
+
 const Row = ({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) => (
   <div className="flex items-center justify-between">
     <span className={highlight ? "font-semibold text-foreground" : "text-muted-foreground"}>
