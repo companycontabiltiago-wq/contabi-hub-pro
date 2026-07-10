@@ -33,6 +33,7 @@ import { BrandSettingsDialog } from "@/components/BrandSettingsDialog";
 type ToolKey =
   | "nf"
   | "rpa"
+  | "vt-recibo"
   | "agendamento"
   | "custo-funcionario"
   | "pro-labore"
