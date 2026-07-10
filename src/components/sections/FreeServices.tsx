@@ -72,6 +72,13 @@ const tools: {
     type: "calc",
   },
   {
+    key: "vt-recibo",
+    title: "Recibo de Vale-Transporte",
+    short: "Cálculo automático diário/mensal + PDF",
+    icon: Bus,
+    type: "calc",
+  },
+  {
     key: "agendamento",
     title: "Agendamento de Atendimento",
     short: "Via Google Agenda",
