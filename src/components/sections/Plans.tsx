@@ -326,7 +326,7 @@ export const Plans = () => {
             onClick={gerarArtePDF}
           >
             <Download className="mr-2 h-4 w-4" />
-            Baixar arte dos planos em PDF
+            Baixar catalogo dos planos
           </Button>
         </div>
 
