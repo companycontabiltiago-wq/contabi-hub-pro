@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,8 +15,16 @@ import IrpfMedicos from "./pages/artigos/IrpfMedicos.tsx";
 import Mei from "./pages/Mei.tsx";
 import ResetPassword from "./pages/ResetPassword.tsx";
 import Plataforma from "./pages/Plataforma.tsx";
+import { SiteChatWidget } from "@/components/assistant/SiteChatWidget";
 
 const queryClient = new QueryClient();
+
+const GlobalWidgets = () => {
+  const { pathname } = useLocation();
+  const hidden = pathname.startsWith("/area-cliente") || pathname.startsWith("/admin") || pathname.startsWith("/auth");
+  if (hidden) return null;
+  return <SiteChatWidget />;
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -38,6 +46,7 @@ const App = () => (
           <Route path="/mei" element={<Mei />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <GlobalWidgets />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

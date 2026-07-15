@@ -43,7 +43,9 @@ import {
   History,
   FileBadge,
   PlaySquare,
+  Bot,
 } from "lucide-react";
+import { ClientAssistant } from "@/components/assistant/ClientAssistant";
 import logo from "@/assets/logo-company.jpeg";
 
 type Category =
@@ -81,6 +83,7 @@ const FOLDERS: { key: Category; label: string }[] = [
 
 const SIDEBAR_ITEMS = [
   { key: "empresa", label: "Minha Empresa", icon: LayoutDashboard },
+  { key: "assistente", label: "Assistente Ana (IA)", icon: Bot },
   { key: "arquivos", label: "Arquivos", icon: FolderOpen },
   { key: "contabeis", label: "Arquivos Contábeis", icon: BookOpen },
   { key: "protocolos", label: "Protocolos", icon: ClipboardList },
@@ -339,7 +342,9 @@ const ClientArea = () => {
           </div>
 
           {/* Section content */}
-          {active === "arquivos" ? (
+          {active === "assistente" ? (
+            userId ? <ClientAssistant userId={userId} /> : null
+          ) : active === "arquivos" ? (
             <section className="rounded-lg border border-border bg-background">
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border p-4">
                 <div className="flex items-center gap-2">
