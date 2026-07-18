@@ -258,6 +258,31 @@ const concepts: Record<ToolKey, { title: string; body: React.ReactNode }> = {
       </>
     ),
   },
+  "va-recibo": {
+    title: "Recibo de Vale-Alimentação / Vale-Refeição",
+    body: (
+      <>
+        <p>
+          O <strong>Vale-Alimentação (VA)</strong> e o <strong>Vale-Refeição
+          (VR)</strong> são benefícios concedidos pelo empregador para auxiliar
+          na alimentação do colaborador durante o expediente. Diferente do VT,
+          não são obrigatórios por lei, mas são isentos de INSS e IRRF quando
+          obedecidos aos limites da legislação (Lei 9.250/1995 e IN RFB 1.500/2014).
+        </p>
+        <p>
+          Use esta ferramenta para gerar um <strong>recibo de entrega/pagamento
+          de VA/VR</strong> ao colaborador, com cálculo automático a partir do
+          <em>valor diário × dias trabalhados</em> ou informando diretamente
+          o <em>valor mensal</em>.
+        </p>
+        <p className="text-sm text-muted-foreground">
+          ⚠️ Documento de conferência entre empresa e colaborador. Não substitui
+          a folha de pagamento nem os registros oficiais. Mantenha o valor dentro
+          dos limites de isenção previstos em lei.
+        </p>
+      </>
+    ),
+  },
   agendamento: {
     title: "Agendamento de Horário de Atendimento",
     body: (
