@@ -35,6 +35,7 @@ type ToolKey =
   | "nf"
   | "rpa"
   | "vt-recibo"
+  | "va-recibo"
   | "agendamento"
   | "custo-funcionario"
   | "pro-labore"
