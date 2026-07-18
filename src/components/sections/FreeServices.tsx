@@ -22,6 +22,7 @@ import {
   ExternalLink,
   Scale,
   Bus,
+  UtensilsCrossed,
 } from "lucide-react";
 import { jsPDF } from "jspdf";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
