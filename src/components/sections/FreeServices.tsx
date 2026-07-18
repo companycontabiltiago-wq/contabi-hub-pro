@@ -81,6 +81,13 @@ const tools: {
     type: "calc",
   },
   {
+    key: "va-recibo",
+    title: "Recibo de Vale-Alimentação",
+    short: "Cálculo automático diário/mensal + PDF",
+    icon: UtensilsCrossed,
+    type: "calc",
+  },
+  {
     key: "agendamento",
     title: "Agendamento de Atendimento",
     short: "Via Google Agenda",
