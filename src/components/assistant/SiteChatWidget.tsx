@@ -95,7 +95,7 @@ export const SiteChatWidget = () => {
           aria-label="Abrir assistente"
         >
           <MessageCircle className="h-5 w-5" />
-          <span className="hidden sm:inline">Fale com a Ana</span>
+          <span className="hidden sm:inline">Fale com o Tiago</span>
         </button>
       )}
 
