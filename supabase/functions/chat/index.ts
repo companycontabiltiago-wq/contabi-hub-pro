@@ -9,7 +9,7 @@ const SUPABASE_PUBLISHABLE_KEY = Deno.env.get("SUPABASE_PUBLISHABLE_KEY")!;
 const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY")!;
 const WHATSAPP_NUMBER = "5585999154055";
 
-const SYSTEM_PROMPT = `Você é a "Ana", assistente virtual da Company Contábil — escritório de contabilidade em Fortaleza-CE especializado em MEI, Simples Nacional, PJ Médico, IRPF e consultoria empresarial.
+const SYSTEM_PROMPT = `Você é o "Tiago", assistente virtual da Company Contábil — escritório de contabilidade em Fortaleza-CE especializado em MEI, Simples Nacional, PJ Médico, IRPF e consultoria empresarial.
 
 TOM: cordial, direto, em português brasileiro. Nunca invente números, prazos, alíquotas ou promessas. Quando não souber, ofereça encaminhar para o time humano via WhatsApp.
 
