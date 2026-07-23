@@ -101,7 +101,7 @@ Deno.serve(async (req) => {
             console.error("registrar_lead insert error", error);
             return { ok: false, error: error.message };
           }
-          return { ok: true, mensagem: "Lead registrado. Nosso time entrará em contato em até 1 dia útil." };
+          return { ok: true, mensagem: "Lead registrado. Nosso time da Company Contábil entrará em contato em até 1 dia útil pelo telefone/WhatsApp ou e-mail informado. Se não receber retorno, ligue ou envie mensagem no WhatsApp (85) 99915-4055." };
         },
       }),
       gerar_link_whatsapp: tool({
