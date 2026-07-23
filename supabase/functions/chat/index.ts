@@ -77,14 +77,14 @@ Deno.serve(async (req) => {
         inputSchema: z.object({
           contact_name: z.string().describe("Nome do contato"),
           email: z.string().email().describe("E-mail"),
-          phone: z.string().describe("Telefone/WhatsApp com DDD"),
+          phone: z.string().describe("Telefone/WhatsApp com DDD (mínimo 8 dígitos)"),
           plan_name: z.string().describe("Plano de interesse: Contábil, Empresarial, Premium ou 'A definir'"),
           company_name: z.string().optional(),
           notes: z.string().optional().describe("Contexto da conversa/necessidade"),
         }),
         execute: async (input) => {
-          const admin = createClient(SUPABASE_URL, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? SUPABASE_PUBLISHABLE_KEY);
-          const { error } = await admin.from("plan_leads").insert({
+          const sb = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+          const { error } = await sb.from("plan_leads").insert({
             contact_name: input.contact_name,
             email: input.email,
             phone: input.phone,
@@ -92,8 +92,15 @@ Deno.serve(async (req) => {
             company_name: input.company_name ?? null,
             notes: input.notes ?? null,
             preferred_contact: "whatsapp",
+            segment: "outros",
+            tax_regime: "nao_sei",
+            has_cnpj: false,
+            employees_clt: 0,
           });
-          if (error) return { ok: false, error: error.message };
+          if (error) {
+            console.error("registrar_lead insert error", error);
+            return { ok: false, error: error.message };
+          }
           return { ok: true, mensagem: "Lead registrado. Nosso time entrará em contato em até 1 dia útil." };
         },
       }),
