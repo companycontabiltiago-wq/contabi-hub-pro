@@ -22,7 +22,7 @@ export const ChatConversation = ({
   initialMessages = [],
   onMessagesChange,
   authenticated = false,
-  emptyTitle = "Olá! Eu sou a Ana 👋",
+  emptyTitle = "Olá! Eu sou o Tiago 👋",
   emptyHint = "Assistente virtual da Company Contábil. Como posso ajudar hoje?",
   suggestions = [],
 }: Props) => {
@@ -103,7 +103,7 @@ export const ChatConversation = ({
 
         {status === "submitted" && (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Loader2 className="h-4 w-4 animate-spin" /> Ana está pensando…
+            <Loader2 className="h-4 w-4 animate-spin" /> Tiago está pensando…
           </div>
         )}
         {error && (
