@@ -103,7 +103,7 @@ export const SiteChatWidget = () => {
         <div className="fixed bottom-5 right-5 z-50 flex h-[600px] max-h-[calc(100vh-2rem)] w-[380px] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-2xl border border-border bg-background shadow-2xl">
           <header className="flex items-center justify-between border-b border-border bg-primary px-4 py-3 text-primary-foreground">
             <div>
-              <p className="font-display font-semibold">Ana · Assistente</p>
+              <p className="font-display font-semibold">Tiago · Assistente</p>
               <p className="text-xs opacity-80">Company Contábil</p>
             </div>
             <div className="flex items-center gap-1">
