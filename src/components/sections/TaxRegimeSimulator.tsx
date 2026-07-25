@@ -293,6 +293,7 @@ export const TaxRegimeSimulator = () => {
   const [iss, setIss] = useState("5");
   const [uf, setUf] = useState<string>("SP");
   const [icms, setIcms] = useState(String(ICMS_UF["SP"]));
+  const [selectedPlan, setSelectedPlan] = useState<{ name: string; price: string } | null>(null);
 
   // Atualiza ICMS automaticamente ao trocar UF
   const handleUfChange = (novaUf: string) => {
