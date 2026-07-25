@@ -672,6 +672,93 @@ export const TaxRegimeSimulator = () => {
         </div>
       </div>
 
+      {/* Planos de Assessoria Contábil */}
+      {fm > 0 && fa > 0 && (
+        <div className="rounded-lg border border-border bg-card p-4">
+          <h5 className="mb-1 font-display font-bold text-primary">
+            💼 Planos de Assessoria Contábil
+          </h5>
+          <p className="mb-4 text-xs text-muted-foreground">
+            Combine a carga tributária simulada com o investimento mensal em assessoria contábil.
+          </p>
+          <div className="grid gap-4 md:grid-cols-3">
+            {plans.map((plan) => (
+              <Card
+                key={plan.code}
+                className={`flex flex-col border p-4 transition-all ${
+                  plan.highlight
+                    ? "border-accent/60 bg-accent/5 shadow-elegant"
+                    : "border-border bg-card"
+                }`}
+              >
+                {plan.highlight && (
+                  <span className="mb-2 inline-flex items-center gap-1 self-start rounded-full bg-accent px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent-foreground">
+                    <Sparkles className="h-3 w-3" /> Mais popular
+                  </span>
+                )}
+                <div className="rounded-lg bg-primary px-3 py-2 text-center">
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-white/80">
+                    Plano
+                  </p>
+                  <p className="font-display text-2xl font-bold text-accent">
+                    {plan.name}
+                  </p>
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-white/90">
+                    {plan.subtitle}
+                  </p>
+                </div>
+                <div className="mt-3 text-center">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                    A partir de
+                  </p>
+                  <p className="font-display text-3xl font-bold text-primary">
+                    R$ {plan.price},00
+                    <span className="text-sm font-normal text-muted-foreground"> /mês</span>
+                  </p>
+                </div>
+                <ul className="mt-3 flex-1 space-y-1 text-xs">
+                  {plan.features.slice(0, 5).map((f) => (
+                    <li key={f} className="flex items-start gap-1.5">
+                      <Check className="mt-0.5 h-3 w-3 shrink-0 text-accent" />
+                      <span className="text-foreground/80">{f}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-3 rounded-lg bg-primary/10 p-2 text-center">
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-primary">
+                    Total mensal estimado
+                  </p>
+                  <p className="font-display text-lg font-bold text-primary">
+                    {fmtBRL(cargaAtualReferencia + Number(plan.price))}
+                  </p>
+                  <p className="text-[10px] text-muted-foreground">
+                    Tributos + plano
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  onClick={() =>
+                    setSelectedPlan({ name: plan.name, price: plan.price })
+                  }
+                  className={`mt-3 w-full ${
+                    plan.highlight
+                      ? "bg-accent text-accent-foreground hover:bg-accent/90"
+                      : ""
+                  }`}
+                  variant={plan.highlight ? "default" : "outline"}
+                  size="sm"
+                >
+                  Contratar {plan.name}
+                </Button>
+              </Card>
+            ))}
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            ⚠️ O total mensal estimado é a soma da carga tributária do regime mais econômico com o investimento do plano. Valores meramente informativos.
+          </p>
+        </div>
+      )}
+
       {fm > 0 && fa > 0 && (
         <Button
           type="button"
