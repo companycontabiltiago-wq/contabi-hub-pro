@@ -121,12 +121,32 @@ export const PlanContractDialog = ({ open, onOpenChange, planName, planPrice }: 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!form.segment) {
+      toast({ title: "Selecione o segmento", description: "Informe o segmento da empresa (Comércio, Serviço, Indústria ou Outros).", variant: "destructive" });
+      return;
+    }
+    if (!form.tax_regime) {
+      toast({ title: "Selecione o regime tributário", description: "Escolha um regime (ou 'Não sei').", variant: "destructive" });
+      return;
+    }
+
     const parsed = schema.safeParse(form);
     if (!parsed.success) {
       const first = parsed.error.issues[0];
+      const fieldLabels: Record<string, string> = {
+        contact_name: "Nome",
+        email: "E-mail",
+        phone: "WhatsApp / Telefone",
+        cnpj: "CNPJ",
+        segment: "Segmento",
+        tax_regime: "Regime tributário",
+        employees_clt: "Funcionários CLT",
+      };
+      const field = first?.path?.[0] as string | undefined;
+      const label = field ? fieldLabels[field] ?? field : undefined;
       toast({
         title: "Verifique os dados",
-        description: first?.message ?? "Preencha os campos obrigatórios.",
+        description: label ? `Campo "${label}": ${first?.message}` : first?.message ?? "Preencha os campos obrigatórios.",
         variant: "destructive",
       });
       return;
