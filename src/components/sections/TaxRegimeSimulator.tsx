@@ -841,6 +841,26 @@ export const TaxRegimeSimulator = () => {
                   ],
                 },
                 {
+                  title: "Planos de Assessoria Contábil",
+                  rows: [
+                    ...plans.map((plan) => ({
+                      label: `Plano ${plan.name} (${plan.subtitle})`,
+                      value: `R$ ${plan.price},00/mês`,
+                      highlight: plan.highlight,
+                    })),
+                    { divider: true },
+                    {
+                      label: "Total mensal (tributos + plano START)",
+                      value: fmtBRL(cargaAtualReferencia + 569),
+                      highlight: true,
+                    },
+                    {
+                      label: "Total mensal (tributos + plano PREMIUM)",
+                      value: fmtBRL(cargaAtualReferencia + 899),
+                    },
+                  ],
+                },
+                {
                   title: "Reforma Tributária — IBS + CBS (vigência plena 2033)",
                   rows: [
                     { label: "CBS Federal (8,8%)", value: `${fmtBRL(fm * 0.088)}/mês` },
