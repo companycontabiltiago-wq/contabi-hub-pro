@@ -10,8 +10,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CheckCircle2, TrendingUp, Info, Printer } from "lucide-react";
+import { CheckCircle2, TrendingUp, Info, Printer, Check, Sparkles } from "lucide-react";
 import { gerarRelatorioPDF } from "@/lib/pdfReport";
+import { plans } from "./Plans";
+import { PlanContractDialog } from "@/components/PlanContractDialog";
 
 const fmtBRL = (v: number) =>
   v.toLocaleString("pt-BR", {
