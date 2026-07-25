@@ -863,6 +863,13 @@ export const TaxRegimeSimulator = () => {
         análise detalhada (CNAE, folha, créditos, benefícios fiscais). Consulte
         a Company Contábil para um diagnóstico preciso.
       </p>
+
+      <PlanContractDialog
+        open={!!selectedPlan}
+        onOpenChange={(o) => !o && setSelectedPlan(null)}
+        planName={selectedPlan?.name ?? ""}
+        planPrice={selectedPlan?.price}
+      />
     </div>
   );
 };
