@@ -6,7 +6,7 @@ import { jsPDF } from "jspdf";
 import { PlanContractDialog } from "@/components/PlanContractDialog";
 import { loadBrand } from "@/lib/pdfReport";
 
-type Plan = {
+export type Plan = {
   code: string;
   name: string;
   subtitle: string;
@@ -17,7 +17,7 @@ type Plan = {
   highlight: boolean;
 };
 
-const plans: Plan[] = [
+export const plans: Plan[] = [
   {
     code: "369",
     name: "369",
