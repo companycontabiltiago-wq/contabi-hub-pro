@@ -909,7 +909,7 @@ const RpaCalc = () => {
       const m = hex.replace("#", "");
       return [0, 2, 4].map((i) => parseInt(m.substring(i, i + 2), 16)) as [number, number, number];
     };
-    const [pr, pg, pb] = hexToRgb(brand.primaryColor || "#0F2048");
+    const [pr, pg, pb] = hexToRgb(brand.primaryColor || "#1B4332");
 
     const doc = new jsPDF({ unit: "mm", format: "a4" });
     const pageW = 210;
@@ -1257,7 +1257,7 @@ const VtReciboCalc = () => {
       const m = hex.replace("#", "");
       return [0, 2, 4].map((i) => parseInt(m.substring(i, i + 2), 16)) as [number, number, number];
     };
-    const [pr, pg, pb] = hexToRgb(brand.primaryColor || "#0F2048");
+    const [pr, pg, pb] = hexToRgb(brand.primaryColor || "#1B4332");
 
     const doc = new jsPDF({ unit: "mm", format: "a4" });
     const pageW = 210;
@@ -1625,7 +1625,7 @@ const VaReciboCalc = () => {
       const m = hex.replace("#", "");
       return [0, 2, 4].map((i) => parseInt(m.substring(i, i + 2), 16)) as [number, number, number];
     };
-    const [pr, pg, pb] = hexToRgb(brand.primaryColor || "#0F2048");
+    const [pr, pg, pb] = hexToRgb(brand.primaryColor || "#1B4332");
 
     const doc = new jsPDF({ unit: "mm", format: "a4" });
     const pageW = 210;
