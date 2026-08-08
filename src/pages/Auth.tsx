@@ -165,7 +165,7 @@ const Auth = () => {
         </Link>
 
         <div className="mb-4 flex items-center justify-center">
-          <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide text-white ${profile === "admin" ? "bg-emerald-500" : "bg-orange-400"}`}>
+          <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide ${profile === "admin" ? "bg-primary text-primary-foreground" : "bg-accent text-accent-foreground"}`}>
             {profile === "admin" ? <Briefcase className="h-3 w-3" /> : <Building2 className="h-3 w-3" />}
             {profile === "admin" ? "Gestão Contábil" : "Cliente"}
           </span>
