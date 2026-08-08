@@ -5,66 +5,66 @@
 @tailwind utilities;
 
 /* Company Contábil — Design System
-   Inspirado em escritórios contábeis modernos: azul marinho profundo + laranja vibrante.
+   Verde menta moderno: fundo claro, verde profundo e acento menta vibrante.
    Todas as cores em HSL.
 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222 47% 11%;
+    --background: 155 30% 97%;
+    --foreground: 160 60% 10%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card: 155 25% 98%;
+    --card-foreground: 160 60% 10%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover: 155 25% 98%;
+    --popover-foreground: 160 60% 10%;
 
     /* Brand */
-    --primary: 222 60% 18%;          /* navy deep */
+    --primary: 160 60% 22%;          /* deep mint green */
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 220 70% 30%;
+    --primary-glow: 160 70% 40%;
 
-    --accent: 22 95% 55%;            /* orange */
+    --accent: 164 70% 50%;            /* bright mint */
     --accent-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222 60% 18%;
+    --secondary: 155 30% 94%;
+    --secondary-foreground: 160 60% 18%;
 
-    --muted: 210 30% 96%;
-    --muted-foreground: 215 16% 42%;
+    --muted: 155 25% 94%;
+    --muted-foreground: 160 20% 40%;
 
-    --success: 142 70% 42%;
+    --success: 150 70% 42%;
     --success-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 215 25% 90%;
-    --input: 215 25% 90%;
-    --ring: 222 60% 18%;
+    --border: 160 25% 88%;
+    --input: 160 25% 88%;
+    --ring: 160 60% 22%;
 
     --radius: 0.75rem;
 
     /* Gradients & shadows */
-    --gradient-hero: linear-gradient(135deg, hsl(222 60% 14%) 0%, hsl(222 70% 22%) 60%, hsl(220 60% 28%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(22 95% 58%), hsl(14 90% 50%));
-    --gradient-soft: linear-gradient(180deg, hsl(210 40% 98%), hsl(0 0% 100%));
+    --gradient-hero: linear-gradient(135deg, hsl(160 60% 14%) 0%, hsl(160 65% 22%) 60%, hsl(160 55% 28%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(164 75% 55%), hsl(158 90% 62%));
+    --gradient-soft: linear-gradient(180deg, hsl(155 30% 97%), hsl(0 0% 100%));
 
-    --shadow-elegant: 0 20px 50px -20px hsl(222 60% 18% / 0.25);
-    --shadow-card: 0 4px 20px -8px hsl(222 60% 18% / 0.12);
-    --shadow-glow: 0 0 60px hsl(22 95% 55% / 0.35);
+    --shadow-elegant: 0 20px 50px -20px hsl(160 60% 22% / 0.25);
+    --shadow-card: 0 4px 20px -8px hsl(160 60% 22% / 0.12);
+    --shadow-glow: 0 0 60px hsl(164 70% 50% / 0.35);
 
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-    --sidebar-background: 222 60% 18%;
+    --sidebar-background: 160 60% 22%;
     --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 22 95% 55%;
+    --sidebar-primary: 164 70% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 222 50% 25%;
+    --sidebar-accent: 160 50% 28%;
     --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 222 50% 25%;
-    --sidebar-ring: 22 95% 55%;
+    --sidebar-border: 160 50% 28%;
+    --sidebar-ring: 164 70% 50%;
   }
 
   .dark {
