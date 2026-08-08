@@ -45,14 +45,14 @@ const Plataforma = () => {
           {/* Gestão Contábil */}
           <button
             onClick={() => navigate("/auth?profile=admin")}
-            className="group flex flex-col overflow-hidden rounded-2xl border border-emerald-500/20 bg-white text-left shadow-elegant transition hover:-translate-y-1 hover:shadow-2xl"
+            className="group flex flex-col overflow-hidden rounded-2xl border border-primary/20 bg-card text-left shadow-elegant transition hover:-translate-y-1 hover:shadow-2xl"
           >
-            <div className="flex items-center gap-4 bg-emerald-500 p-6 text-white">
-              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-white/20">
+            <div className="flex items-center gap-4 bg-primary p-6 text-primary-foreground">
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary-foreground/20">
                 <Briefcase className="h-7 w-7" />
               </div>
               <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-white/80">Equipe interna</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-primary-foreground/80">Equipe interna</p>
                 <h2 className="font-display text-2xl font-bold">Gestão Contábil</h2>
               </div>
             </div>
@@ -63,16 +63,16 @@ const Plataforma = () => {
               </p>
               <ul className="space-y-2 text-sm">
                 <li className="flex items-center gap-2 text-foreground/80">
-                  <Users className="h-4 w-4 text-emerald-500" /> Gestão de clientes cadastrados
+                  <Users className="h-4 w-4 text-primary" /> Gestão de clientes cadastrados
                 </li>
                 <li className="flex items-center gap-2 text-foreground/80">
-                  <FileText className="h-4 w-4 text-emerald-500" /> Documentos enviados pelos clientes
+                  <FileText className="h-4 w-4 text-primary" /> Documentos enviados pelos clientes
                 </li>
                 <li className="flex items-center gap-2 text-foreground/80">
-                  <ShieldCheck className="h-4 w-4 text-emerald-500" /> Publicação de novidades e avisos
+                  <ShieldCheck className="h-4 w-4 text-primary" /> Publicação de novidades e avisos
                 </li>
               </ul>
-              <span className="mt-auto inline-flex items-center justify-center rounded-lg bg-emerald-500 px-5 py-3 text-sm font-bold uppercase tracking-wide text-white transition group-hover:bg-emerald-600">
+              <span className="mt-auto inline-flex items-center justify-center rounded-lg bg-primary px-5 py-3 text-sm font-bold uppercase tracking-wide text-primary-foreground transition group-hover:bg-primary/90">
                 Entrar como Contabilidade
               </span>
             </div>
@@ -81,14 +81,14 @@ const Plataforma = () => {
           {/* Cliente */}
           <button
             onClick={() => navigate("/auth?profile=client")}
-            className="group flex flex-col overflow-hidden rounded-2xl border border-orange-400/20 bg-white text-left shadow-elegant transition hover:-translate-y-1 hover:shadow-2xl"
+            className="group flex flex-col overflow-hidden rounded-2xl border border-accent/20 bg-card text-left shadow-elegant transition hover:-translate-y-1 hover:shadow-2xl"
           >
-            <div className="flex items-center gap-4 bg-orange-400 p-6 text-white">
-              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-white/20">
+            <div className="flex items-center gap-4 bg-accent p-6 text-accent-foreground">
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-accent-foreground/20">
                 <Building2 className="h-7 w-7" />
               </div>
               <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-white/80">Sua empresa</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-accent-foreground/80">Sua empresa</p>
                 <h2 className="font-display text-2xl font-bold">Cliente</h2>
               </div>
             </div>
@@ -99,16 +99,16 @@ const Plataforma = () => {
               </p>
               <ul className="space-y-2 text-sm">
                 <li className="flex items-center gap-2 text-foreground/80">
-                  <FileText className="h-4 w-4 text-orange-500" /> Upload e download de documentos
+                  <FileText className="h-4 w-4 text-accent" /> Upload e download de documentos
                 </li>
                 <li className="flex items-center gap-2 text-foreground/80">
-                  <Users className="h-4 w-4 text-orange-500" /> Pastas organizadas por categoria
+                  <Users className="h-4 w-4 text-accent" /> Pastas organizadas por categoria
                 </li>
                 <li className="flex items-center gap-2 text-foreground/80">
-                  <ShieldCheck className="h-4 w-4 text-orange-500" /> Acompanhe o status do envio
+                  <ShieldCheck className="h-4 w-4 text-accent" /> Acompanhe o status do envio
                 </li>
               </ul>
-              <span className="mt-auto inline-flex items-center justify-center rounded-lg bg-orange-400 px-5 py-3 text-sm font-bold uppercase tracking-wide text-white transition group-hover:bg-orange-500">
+              <span className="mt-auto inline-flex items-center justify-center rounded-lg bg-accent px-5 py-3 text-sm font-bold uppercase tracking-wide text-accent-foreground transition group-hover:bg-accent/90">
                 Entrar como Cliente
               </span>
             </div>

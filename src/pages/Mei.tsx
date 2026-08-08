@@ -74,7 +74,7 @@ const comparativo = [
     regime: "Simples Nacional (SIMEI)",
     tributos: "DAS fixo (~R$ 75 a R$ 80/mês)",
     obrig: "DASN-SIMEI anual + DAS mensal",
-    color: "bg-emerald-500/10 text-emerald-700 border-emerald-200",
+    color: "bg-primary/10 text-primary border-primary/20",
   },
   {
     porte: "ME",

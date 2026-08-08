@@ -139,14 +139,14 @@ const Auth = () => {
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             <button
               onClick={() => { setProfile("admin"); setMode("signin"); }}
-              className="group flex items-center justify-center gap-3 rounded-lg bg-emerald-500 px-6 py-6 text-lg font-bold uppercase tracking-wide text-white shadow-md transition hover:bg-emerald-600 hover:-translate-y-0.5"
+              className="group flex items-center justify-center gap-3 rounded-lg bg-primary px-6 py-6 text-lg font-bold uppercase tracking-wide text-primary-foreground shadow-md transition hover:bg-primary/90 hover:-translate-y-0.5"
             >
               <Briefcase className="h-6 w-6" />
               Gestão Contábil
             </button>
             <button
               onClick={() => { setProfile("client"); setMode("signin"); }}
-              className="group flex items-center justify-center gap-3 rounded-lg bg-orange-400 px-6 py-6 text-lg font-bold uppercase tracking-wide text-white shadow-md transition hover:bg-orange-500 hover:-translate-y-0.5"
+              className="group flex items-center justify-center gap-3 rounded-lg bg-accent px-6 py-6 text-lg font-bold uppercase tracking-wide text-accent-foreground shadow-md transition hover:bg-accent/90 hover:-translate-y-0.5"
             >
               <Building2 className="h-6 w-6" />
               Cliente
@@ -165,7 +165,7 @@ const Auth = () => {
         </Link>
 
         <div className="mb-4 flex items-center justify-center">
-          <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide text-white ${profile === "admin" ? "bg-emerald-500" : "bg-orange-400"}`}>
+          <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide ${profile === "admin" ? "bg-primary text-primary-foreground" : "bg-accent text-accent-foreground"}`}>
             {profile === "admin" ? <Briefcase className="h-3 w-3" /> : <Building2 className="h-3 w-3" />}
             {profile === "admin" ? "Gestão Contábil" : "Cliente"}
           </span>
