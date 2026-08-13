@@ -206,7 +206,7 @@ export const BrandSettingsDialog = ({ open, onOpenChange }: Props) => {
                   id="b-pri"
                   type="color"
                   className="h-10 w-16 cursor-pointer p-1"
-                  value={brand.primaryColor || "#1B4332"}
+                  value={brand.primaryColor || "#0F2048"}
                   onChange={(e) => update("primaryColor", e.target.value)}
                 />
                 <Input
@@ -223,7 +223,7 @@ export const BrandSettingsDialog = ({ open, onOpenChange }: Props) => {
                   id="b-acc"
                   type="color"
                   className="h-10 w-16 cursor-pointer p-1"
-                  value={brand.accentColor || "#2DD4A8"}
+                  value={brand.accentColor || "#F59E0B"}
                   onChange={(e) => update("accentColor", e.target.value)}
                 />
                 <Input
@@ -239,7 +239,7 @@ export const BrandSettingsDialog = ({ open, onOpenChange }: Props) => {
           <div className="rounded-lg border border-border overflow-hidden">
             <div
               className="flex items-center gap-3 p-3 text-white"
-              style={{ backgroundColor: brand.primaryColor || "#1B4332" }}
+              style={{ backgroundColor: brand.primaryColor || "#0F2048" }}
             >
               {brand.logoDataUrl && (
                 <img
@@ -261,7 +261,7 @@ export const BrandSettingsDialog = ({ open, onOpenChange }: Props) => {
             <div className="p-3 text-xs text-muted-foreground">
               <span
                 className="inline-block rounded px-2 py-0.5 font-bold text-white"
-                style={{ backgroundColor: brand.accentColor || "#2DD4A8" }}
+                style={{ backgroundColor: brand.accentColor || "#F59E0B" }}
               >
                 Linha de destaque
               </span>{" "}
