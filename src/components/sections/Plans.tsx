@@ -93,8 +93,8 @@ const hexToRgb = (hex: string): [number, number, number] => {
 
 const gerarArtePDF = () => {
   const brand = loadBrand();
-  const [pr, pg, pb] = hexToRgb(brand.primaryColor || "#1B4332");
-  const [ar, ag, ab] = hexToRgb(brand.accentColor || "#2DD4A8");
+  const [pr, pg, pb] = hexToRgb(brand.primaryColor || "#0F2048");
+  const [ar, ag, ab] = hexToRgb(brand.accentColor || "#F59E0B");
 
   const doc = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
   const pageW = 210;
