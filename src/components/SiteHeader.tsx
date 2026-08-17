@@ -22,6 +22,7 @@ export const SiteHeader = () => {
     { label: "Serviços", href: "#servicos" },
     { label: "MEI & Aberturas", href: "/mei" },
     { label: "Notícias", href: "/#reformas" },
+    { label: "Reforma Tributária", href: "/reforma-tributaria-2026.html" },
     { label: "Planos", href: "#planos" },
     { label: "Contato", href: "#contato" },
   ];
