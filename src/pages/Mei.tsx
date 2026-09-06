@@ -357,7 +357,19 @@ const Mei = () => {
                 administrador de outra empresa; servidor público federal em
                 atividade; quem exerce atividade não permitida na tabela oficial
                 do SIMEI; e pensionistas/beneficiários de auxílios que percam o
-                direito ao abrir CNPJ.
+                direito ao abrir CNPJ. Quem está recebendo{" "}
+                <strong>seguro-desemprego</strong> também não deve abrir o MEI:
+                o CNPJ cancela as parcelas restantes do benefício.
+              </p>
+            </div>
+
+            <div className="mt-4 flex items-start gap-3 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
+              <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />
+              <p>
+                <strong>Atenção ao IPTU:</strong> ao usar o endereço residencial
+                como sede do MEI, a Prefeitura do município pode passar a cobrar
+                IPTU e taxas do imóvel — inclusive quando a residência alugada
+                era isenta do pagamento.
               </p>
             </div>
           </div>
