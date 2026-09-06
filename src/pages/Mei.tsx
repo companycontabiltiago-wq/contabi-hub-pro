@@ -80,6 +80,7 @@ const requisitos = [
       "Manter o Relatório Mensal de Receitas Brutas com as notas de entrada e saída",
       "Abrir conta bancária PJ para separar as finanças pessoais das da empresa",
       "Atenção ao IPTU: ao registrar o CNPJ no endereço residencial, a Prefeitura pode passar a cobrar a taxa/IPTU do imóvel, inclusive quando o imóvel alugado era isento",
+    ],
   },
   {
     title: "Benefícios de ser MEI",
