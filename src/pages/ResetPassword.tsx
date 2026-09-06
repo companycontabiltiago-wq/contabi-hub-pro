@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { z } from "zod";
-import logo from "@/assets/logo-company.jpeg";
+import logo from "@/assets/logo-company-transparent.png";
 
 const schema = z
   .object({

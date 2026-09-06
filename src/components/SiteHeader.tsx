@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session } from "@supabase/supabase-js";
-import logo from "@/assets/logo-company.jpeg";
+import logo from "@/assets/logo-company-transparent.png";
 import { Menu, X } from "lucide-react";
 
 export const SiteHeader = () => {

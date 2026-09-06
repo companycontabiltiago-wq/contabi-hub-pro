@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Briefcase, Building2, ArrowLeft, ShieldCheck, FileText, Users } from "lucide-react";
-import logo from "@/assets/logo-company.jpeg";
+import logo from "@/assets/logo-company-transparent.png";
 
 const Plataforma = () => {
   const navigate = useNavigate();
