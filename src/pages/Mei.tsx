@@ -105,6 +105,12 @@ const baixarRequisitosPDF = () =>
             note: "Não pode ser MEI: sócio, titular ou administrador de outra empresa; servidor público federal em atividade; quem exerce atividade fora da tabela do SIMEI; e beneficiários de auxílios que percam o direito ao abrir CNPJ.",
           },
           {
+            note: "Seguro-desemprego: quem está recebendo o benefício não deve abrir MEI — a abertura do CNPJ caracteriza renda própria e cancela as parcelas restantes.",
+          },
+          {
+            note: "IPTU: ao informar o endereço residencial como sede do MEI, a Prefeitura pode passar a cobrar IPTU/taxas do imóvel, inclusive quando o imóvel alugado tinha isenção.",
+          },
+          {
             note: "O DAS-MEI é fixo mensal: INSS (5% do salário mínimo) + R$ 1,00 de ICMS (comércio/indústria) e/ou R$ 5,00 de ISS (serviços).",
           },
           {
