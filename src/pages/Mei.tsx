@@ -217,6 +217,60 @@ const Mei = () => {
           </div>
         </section>
 
+        {/* Requisitos para abertura */}
+        <section id="requisitos" className="py-16 md:py-20">
+          <div className="container">
+            <div className="mx-auto max-w-2xl text-center">
+              <span className="text-xs font-semibold uppercase tracking-widest text-accent">
+                Requisitos
+              </span>
+              <h2 className="mt-3 font-display text-2xl font-bold text-primary md:text-4xl">
+                Tudo o que é exigido para abrir um MEI
+              </h2>
+              <p className="mt-3 text-muted-foreground">
+                Confira os requisitos legais, os documentos e as informações
+                necessárias. Você pode baixar a lista completa em PDF e usar
+                como checklist.
+              </p>
+              <Button onClick={baixarRequisitosPDF} size="lg" className="mt-6">
+                <Download className="mr-2 h-5 w-5" />
+                Baixar requisitos em PDF
+              </Button>
+            </div>
+
+            <div className="mt-12 grid gap-6 md:grid-cols-2">
+              {requisitos.map((grupo) => (
+                <Card key={grupo.title} className="p-6">
+                  <h3 className="font-display text-lg font-semibold text-primary">
+                    {grupo.title}
+                  </h3>
+                  <ul className="mt-4 space-y-2.5">
+                    {grupo.items.map((item) => (
+                      <li key={item} className="flex items-start gap-2.5">
+                        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                        <span className="text-sm text-foreground/90">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </Card>
+              ))}
+            </div>
+
+            <div className="mt-8 flex items-start gap-3 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
+              <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />
+              <p>
+                <strong>Quem não pode ser MEI:</strong> sócio, titular ou
+                administrador de outra empresa; servidor público federal em
+                atividade; quem exerce atividade não permitida na tabela oficial
+                do SIMEI; e pensionistas/beneficiários de auxílios que percam o
+                direito ao abrir CNPJ.
+              </p>
+            </div>
+          </div>
+        </section>
+
+
+
         {/* Obrigações */}
         <section className="bg-gradient-soft py-16 md:py-20">
           <div className="container">
