@@ -42,6 +42,7 @@ const requisitos = [
       "Ser maior de 18 anos ou emancipado a partir dos 16 anos",
       "Estar em dia com a Receita Federal (CPF regular, sem pendências na declaração de IRPF)",
       "Não ser servidor público federal em atividade",
+      "Não estar recebendo seguro-desemprego — a abertura do CNPJ cancela o benefício",
       "Estrangeiro deve possuir visto permanente e RNM/RNE válido",
     ],
   },
@@ -78,7 +79,7 @@ const requisitos = [
       "Entregar a DASN-SIMEI até 31 de maio de cada ano",
       "Manter o Relatório Mensal de Receitas Brutas com as notas de entrada e saída",
       "Abrir conta bancária PJ para separar as finanças pessoais das da empresa",
-    ],
+      "Atenção ao IPTU: ao registrar o CNPJ no endereço residencial, a Prefeitura pode passar a cobrar a taxa/IPTU do imóvel, inclusive quando o imóvel alugado era isento",
   },
   {
     title: "Benefícios de ser MEI",
