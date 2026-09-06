@@ -22,6 +22,15 @@ import comparativoImg from "@/assets/comparativo-empresas.jpg";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { gerarRelatorioPDF } from "@/lib/pdfReport";
 
+const beneficios = [
+  "CNPJ e inscrição imediata para emitir notas fiscais",
+  "Aposentadoria por idade e auxílios do INSS (doença, maternidade)",
+  "Carga tributária reduzida e fixa (DAS-MEI mensal)",
+  "Acesso a crédito facilitado em bancos (PJ)",
+  "Possibilidade de contratar até 1 funcionário com salário mínimo ou piso da categoria",
+  "Isenção de tributos federais (IRPJ, PIS, COFINS, CSLL e IPI)",
+];
+
 const requisitos = [
   {
     title: "Requisitos legais (quem pode ser MEI)",
@@ -71,6 +80,10 @@ const requisitos = [
       "Abrir conta bancária PJ para separar as finanças pessoais das da empresa",
     ],
   },
+  {
+    title: "Benefícios de ser MEI",
+    items: beneficios,
+  },
 ];
 
 const baixarRequisitosPDF = () =>
@@ -115,14 +128,6 @@ const setMeta = (name: string, content: string, attr: "name" | "property" = "nam
   el.setAttribute("content", content);
 };
 
-const beneficios = [
-  "CNPJ e inscrição imediata para emitir notas fiscais",
-  "Aposentadoria por idade e auxílios do INSS (doença, maternidade)",
-  "Carga tributária reduzida e fixa (DAS-MEI mensal)",
-  "Acesso a crédito facilitado em bancos (PJ)",
-  "Possibilidade de contratar até 1 funcionário com salário mínimo ou piso da categoria",
-  "Isenção de tributos federais (IRPJ, PIS, COFINS, CSLL e IPI)",
-];
 
 const obrigacoes = [
   {
