@@ -15,10 +15,91 @@ import {
   TrendingUp,
   ArrowRight,
   MessageCircle,
+  Download,
 } from "lucide-react";
 import meiImg from "@/assets/mei-illustration.jpg";
 import comparativoImg from "@/assets/comparativo-empresas.jpg";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { gerarRelatorioPDF } from "@/lib/pdfReport";
+
+const requisitos = [
+  {
+    title: "Requisitos legais (quem pode ser MEI)",
+    items: [
+      "Faturar até R$ 81.000,00 por ano (R$ 6.750,00/mês em média)",
+      "Não ser sócio, titular ou administrador de outra empresa",
+      "Ter no máximo 1 funcionário contratado, recebendo até 1 salário mínimo ou o piso da categoria",
+      "Exercer atividade permitida na tabela oficial do SIMEI (CNAE MEI)",
+      "Ser maior de 18 anos ou emancipado a partir dos 16 anos",
+      "Estar em dia com a Receita Federal (CPF regular, sem pendências na declaração de IRPF)",
+      "Não ser servidor público federal em atividade",
+      "Estrangeiro deve possuir visto permanente e RNM/RNE válido",
+    ],
+  },
+  {
+    title: "Documentos e dados pessoais",
+    items: [
+      "CPF do titular",
+      "Número do recibo da última declaração de IRPF (se declarou) ou título de eleitor",
+      "Data de nascimento exatamente como consta na Receita Federal",
+      "RG ou CNH digitalizados",
+      "Telefone celular e e-mail ativos (recebem os códigos de confirmação)",
+      "Conta gov.br nível Prata ou Ouro (obrigatória para o cadastro)",
+    ],
+  },
+  {
+    title: "Informações do negócio",
+    items: [
+      "Definição da atividade principal e até 15 atividades secundárias (CNAE permitidas ao MEI)",
+      "Nome fantasia do negócio (opcional)",
+      "Endereço comercial completo com CEP e número de inscrição imobiliária/IPTU",
+      "Endereço residencial completo do titular",
+      "Definição se a atividade é exercida no local fixo, na casa do cliente, em local próprio ou pela internet",
+      "Verificação prévia de zoneamento/viabilidade junto à prefeitura",
+    ],
+  },
+  {
+    title: "Após a abertura (providências imediatas)",
+    items: [
+      "Emitir o CCMEI — Certificado da Condição de Microempreendedor Individual",
+      "Solicitar o alvará de funcionamento e a inscrição municipal na prefeitura",
+      "Solicitar Inscrição Estadual na Sefaz (obrigatória para comércio e indústria)",
+      "Habilitar a emissão de nota fiscal (NFS-e nacional para serviços e NF-e para comércio)",
+      "Gerar e pagar o DAS-MEI todo mês, até o dia 20",
+      "Entregar a DASN-SIMEI até 31 de maio de cada ano",
+      "Manter o Relatório Mensal de Receitas Brutas com as notas de entrada e saída",
+      "Abrir conta bancária PJ para separar as finanças pessoais das da empresa",
+    ],
+  },
+];
+
+const baixarRequisitosPDF = () =>
+  gerarRelatorioPDF({
+    title: "Requisitos para Abertura de MEI",
+    subtitle: "Checklist completo do Microempreendedor Individual",
+    fileName: `Requisitos_Abertura_MEI_${Date.now()}.pdf`,
+    sections: [
+      ...requisitos.map((g) => ({
+        title: g.title,
+        rows: g.items.map((i) => ({ label: i, value: "☐" })),
+      })),
+      {
+        title: "Impedimentos e observações",
+        rows: [
+          {
+            note: "Não pode ser MEI: sócio, titular ou administrador de outra empresa; servidor público federal em atividade; quem exerce atividade fora da tabela do SIMEI; e beneficiários de auxílios que percam o direito ao abrir CNPJ.",
+          },
+          {
+            note: "O DAS-MEI é fixo mensal: INSS (5% do salário mínimo) + R$ 1,00 de ICMS (comércio/indústria) e/ou R$ 5,00 de ISS (serviços).",
+          },
+          {
+            note: "A Company Contábil cuida de toda a abertura, do enquadramento das atividades ao alvará e à emissão de notas fiscais.",
+          },
+        ],
+      },
+    ],
+  });
+
 
 const PAGE_TITLE = "MEI: abertura, obrigações e diferenças entre MEI, ME e EPP | Company Contábil";
 const PAGE_DESCRIPTION =
@@ -216,6 +297,60 @@ const Mei = () => {
             </div>
           </div>
         </section>
+
+        {/* Requisitos para abertura */}
+        <section id="requisitos" className="py-16 md:py-20">
+          <div className="container">
+            <div className="mx-auto max-w-2xl text-center">
+              <span className="text-xs font-semibold uppercase tracking-widest text-accent">
+                Requisitos
+              </span>
+              <h2 className="mt-3 font-display text-2xl font-bold text-primary md:text-4xl">
+                Tudo o que é exigido para abrir um MEI
+              </h2>
+              <p className="mt-3 text-muted-foreground">
+                Confira os requisitos legais, os documentos e as informações
+                necessárias. Você pode baixar a lista completa em PDF e usar
+                como checklist.
+              </p>
+              <Button onClick={baixarRequisitosPDF} size="lg" className="mt-6">
+                <Download className="mr-2 h-5 w-5" />
+                Baixar requisitos em PDF
+              </Button>
+            </div>
+
+            <div className="mt-12 grid gap-6 md:grid-cols-2">
+              {requisitos.map((grupo) => (
+                <Card key={grupo.title} className="p-6">
+                  <h3 className="font-display text-lg font-semibold text-primary">
+                    {grupo.title}
+                  </h3>
+                  <ul className="mt-4 space-y-2.5">
+                    {grupo.items.map((item) => (
+                      <li key={item} className="flex items-start gap-2.5">
+                        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                        <span className="text-sm text-foreground/90">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </Card>
+              ))}
+            </div>
+
+            <div className="mt-8 flex items-start gap-3 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
+              <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />
+              <p>
+                <strong>Quem não pode ser MEI:</strong> sócio, titular ou
+                administrador de outra empresa; servidor público federal em
+                atividade; quem exerce atividade não permitida na tabela oficial
+                do SIMEI; e pensionistas/beneficiários de auxílios que percam o
+                direito ao abrir CNPJ.
+              </p>
+            </div>
+          </div>
+        </section>
+
+
 
         {/* Obrigações */}
         <section className="bg-gradient-soft py-16 md:py-20">
