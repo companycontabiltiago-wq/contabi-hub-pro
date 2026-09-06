@@ -42,6 +42,7 @@ const requisitos = [
       "Ser maior de 18 anos ou emancipado a partir dos 16 anos",
       "Estar em dia com a Receita Federal (CPF regular, sem pendências na declaração de IRPF)",
       "Não ser servidor público federal em atividade",
+      "Não estar recebendo seguro-desemprego — a abertura do CNPJ cancela o benefício",
       "Estrangeiro deve possuir visto permanente e RNM/RNE válido",
     ],
   },
@@ -78,6 +79,7 @@ const requisitos = [
       "Entregar a DASN-SIMEI até 31 de maio de cada ano",
       "Manter o Relatório Mensal de Receitas Brutas com as notas de entrada e saída",
       "Abrir conta bancária PJ para separar as finanças pessoais das da empresa",
+      "Atenção ao IPTU: ao registrar o CNPJ no endereço residencial, a Prefeitura pode passar a cobrar a taxa/IPTU do imóvel, inclusive quando o imóvel alugado era isento",
     ],
   },
   {
@@ -101,6 +103,12 @@ const baixarRequisitosPDF = () =>
         rows: [
           {
             note: "Não pode ser MEI: sócio, titular ou administrador de outra empresa; servidor público federal em atividade; quem exerce atividade fora da tabela do SIMEI; e beneficiários de auxílios que percam o direito ao abrir CNPJ.",
+          },
+          {
+            note: "Seguro-desemprego: quem está recebendo o benefício não deve abrir MEI — a abertura do CNPJ caracteriza renda própria e cancela as parcelas restantes.",
+          },
+          {
+            note: "IPTU: ao informar o endereço residencial como sede do MEI, a Prefeitura pode passar a cobrar IPTU/taxas do imóvel, inclusive quando o imóvel alugado tinha isenção.",
           },
           {
             note: "O DAS-MEI é fixo mensal: INSS (5% do salário mínimo) + R$ 1,00 de ICMS (comércio/indústria) e/ou R$ 5,00 de ISS (serviços).",
@@ -349,7 +357,19 @@ const Mei = () => {
                 administrador de outra empresa; servidor público federal em
                 atividade; quem exerce atividade não permitida na tabela oficial
                 do SIMEI; e pensionistas/beneficiários de auxílios que percam o
-                direito ao abrir CNPJ.
+                direito ao abrir CNPJ. Quem está recebendo{" "}
+                <strong>seguro-desemprego</strong> também não deve abrir o MEI:
+                o CNPJ cancela as parcelas restantes do benefício.
+              </p>
+            </div>
+
+            <div className="mt-4 flex items-start gap-3 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
+              <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />
+              <p>
+                <strong>Atenção ao IPTU:</strong> ao usar o endereço residencial
+                como sede do MEI, a Prefeitura do município pode passar a cobrar
+                IPTU e taxas do imóvel — inclusive quando a residência alugada
+                era isenta do pagamento.
               </p>
             </div>
           </div>
