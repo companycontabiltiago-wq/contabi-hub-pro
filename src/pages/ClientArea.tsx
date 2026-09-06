@@ -46,7 +46,7 @@ import {
   Bot,
 } from "lucide-react";
 import { ClientAssistant } from "@/components/assistant/ClientAssistant";
-import logo from "@/assets/logo-company.jpeg";
+import logo from "@/assets/logo-company-transparent.png";
 
 type Category =
   | "contabil"
